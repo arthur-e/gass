@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block id-navigator %}
+<div id="navigator">
+    <ul class="navigation">
+        <li><a href="{% url public_index %}">Home</a></li>
+        <li class="lit"><a href="{% url public_about %}">Background</a></li>
+        <li><a href="/gass/current/">Map & Status</a></li>
+        <li><a href="/gass/plots/">Real-Time Plots</a></li>
+        <li><a href="/gass/instrumentation/">Instrumentation</a></li>
+        <li><a href="/gass/team/">Project Team</a></li>
+    </ul>
+</div>
+{% endblock id-navigator %}
+
+{% block id-feature %}
+<div id="feature">
+    <a href="http://rock.geosociety.org/Bookstore/default.asp?oID=0&catID=9&pID=SPE462" target="_blank"><img id="monograph" src="/gass/media/img/monograph.jpg" /></a>
+    The <b>Bering Glacier Monograph</b> is <a href="http://rock.geosociety.org/Bookstore/default.asp?oID=0&catID=9&pID=SPE462" target="_blank">now available</a> from the Geological Society of America!
+    The monograph presents the results of a comprehensive and diverse series of field studies and science investigations at Bering Glacier.
+    The results reported are from a wide range of scientific disciplines, including glaciology, geology, paleogeology, hydrology, limnology, oceanography, tectonics, geomorphology, geophysics, meteorology, remote sensing, climate change, anthropology, and ecological studies pertaining to vegetation, fish, and marine mammals.
+    <a href="http://rock.geosociety.org/Bookstore/default.asp?oID=0&catID=9&pID=SPE462" target="_blank">Purchase it from the GSA today!</a>
+</div>
+{% endblock id-feature %}
+
+{% block id-feed %}
+<div id="feed">
+    <div class="page-title">About the Project</div>
+    <img class="figure resized" src="/gass/media/img/fig_about_glacier.jpg" />
+    <div class="paragraph-wrap">
+        <span class="lead">Bering Glacier in southeastern Alaska</span> is the largest temperate, surging glacier on Earth.
+        It is also the largest and longest glacier in continental North America, with an area of approximately 5,175 km<span class="sup">2</span> and a length of about 190 km.
+        Its surface area is more than 6% of the ice covered area of Alaska and may contain 15-20% of Alaska’s total glacier ice.
+        Due to its location and behavior, it is a major component of both the marine and terrestrial ecosystems of south-central coastal Alaska and the Gulf of Alaska region.
+        Bering surges with a periodicity of approximately 15 to 20 years, and it last surged in 1993-1995.
+    </div>
+    <div class="paragraph">
+        In the last few months, incidental and opportunistic observations have shown that Bering Glacier is now surging.
+        In January 2011, part of the terminus region advanced an average of 25 m/day. During Bering’s last surge, in 1993-95, peak daily speeds were greater than 30 m/day, and it advanced over 10 km, virtually filling Vitus Lake and overunning the forelands.
+        That surge altered the landscape and ecology of the region, particularly in the terminus region.
+        Recent field observations and satellite imagery show that all parts of the lower glacier are involved in the surge, and that areas which had never previously been observed to surge are currently being impacted (i.e. Steller Glacier).
+        In addition to those observations, ice displacement measurements from GPS-equipped ice ablation sensors have recorded surge velocities throughout the glacier from the terminus up to the ice valley.
+        Bering’s 1993-95 surge and its subsequent retreat was studied by the U.S. Geological Survey (USGS) and a variety of academic institutions with support from the Bureau of Land Management (BLM).
+    </div>
+    <div class="paragraph">
+        However, observations during the surge phase were not as detailed or as accurate as now possible.
+        One result of the long-term program carried out during the retreat phase has been the development of new sensors to provide critical data, which has resulted in a better understanding of the Bering system.
+    </div>
+    <div class="title"><a href="#faq" name="faq">Frequently-Asked Questions</a></div>
+    <div class="subtitle"><a href="#faq_may19_melt_rate_change" name="faq_may19_melt_rate_change">What happened around May 19, 2011 to change the melt-rate at B02?</a></div>
+    <div class="paragraph">
+        The surface at B02 was very different from B01 at the time of installation (May 12); B02 had snow cover, while B01 was just ice (the snow had melted completely by the time of installation).
+        It turns out, if you plot the wind and light levels during that time, there was a weather event that probably consisted of heavy rain (since there were sustained winds of over 30 knots and heavy cloud-cover for nearly 24-hours).
+        This may have melted the snow-cover at B02 quickly, causing the rapid ablation seen.
+    </div>
+    <div class="subtitle"><a href="#faq_ablation_rate_difference" name="faq_ablation_rate_difference">Why are the ablation rates (the slopes of the ablation curves) different between B01 and B02?</a></div>
+    <div class="paragraph">
+        There may be two reasons. First, the albedo at site B02 is much higher than at B01 (you can see this from the pictures of the sites at the time of installation, and from the incident to reflected light ratios at both sites).
+        This could result in sunlight being reflected from the ice at B02 more than at B01, causing less melting at B02 due to less solar heating.
+        Further, B02 is at a higher altitude than B01, and there is a known, negative trend between elevation and melt rates. 
+    </div>
+    <div class="subtitle"><a href="#faq_measurements_getting_noisier" name="faq_measurements_getting_noisier">Why are the measurements getting “noisier” as time goes on?</a></div>
+    <div class="paragraph">
+        Several things can contribute to the noise. The sonar unit determines range by “listening” for the “loudest” return echo from the ice.
+        There are multiple returns from a non-flat surface. As the range to the ice increases, the illuminated area of the ice is getting larger.
+        Also, as time goes on, the surface is getting rougher, due to non-uniform melting.
+        This larger area, coupled with increased roughness, may be reducing the signal-to-noise ratio of the direct return in the presence of multiple of returns, reducing the precision of the range estimate.
+        Finally, as the exposed pole becomes taller, the GASS unit will tend to sway slightly, illuminating the rough surface in slightly different ways, causing variations in which echo is “loudest”.
+    </div>
+    <div class="subtitle"><a href="#faq_two_sites_different_speeds" name="faq_two_sites_different_speeds">Can the two sites really be moving at different speeds?</a></div>
+    <div class="paragraph">
+        Yes. The glacier is not one, solid, piece of ice. Nor is it of uniform thickness; it varies in thickness both laterally and longitudinally.
+        In addition, there is variable “drag”, both at the edges and the contact with the ground.
+        Glaciers move either through spreading (when it deforms under its own weight), by a basal slip (when loss of friction causes it to slide downhill), or by deformation of the surface on which it rests.
+        In general, the top and middle flow faster than the bottom and the sides. And parts of the glacier will speed up as they move onto steeper slopes.
+        <a href="http://highered.mcgraw-hill.com/olcweb/cgi/pluginpop.cgi?it=swf::640::480::/sites/dl/free/0072402466/30425/12_08.swf::Fig.%2012.8%20-%20Ice%20Flow%20in%20a%20Glacier" target="_blank">Here is an animation illustrating some of these motions.</a>
+    </div>
+    <div class="subtitle"><a href="#faq_what_is_surging" name="faq_what_is_surging">The Bering Glacier is surging; what does this mean?</a></div>
+    <div class="paragraph">
+        By definition, this is when there are sudden, large-scale displacements. The flow of a surging glacier is defined by two phases.
+        The first is the Active Phase, when ice is transferred from the upper part of the glacier towards the terminus (active to stagnant portions of the glacier).
+        The second phase is the Quiescent Phase, during which ice builds up in upper portions of the glacier and ablation of the terminus occurs. <a href="#aschoff1999">[1]</a>
+    </div>
+    <span class="citation"><a name="aschoff1999">[1] Aschoff, Jennifer L., Megan O’Connor. "Glaciers, Energy, and Mass" 1999. [http://www.homepage.montana.edu/~geol445/hyperglac/systems2/#Deformationbed]</a></span>
+</div>
+{% endblock id-feed %}

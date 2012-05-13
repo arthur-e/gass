@@ -1,4 +1,15 @@
 {% extends "base.html" %}
 
 {% block id-feed %}
+<div id="feed">
+    {% autoescape off %}
+    {% for item in news %}
+        <div class="post">
+            <div class="post-headline brand">{{ item.headline }}</div>
+            <div class="post-date date">{{ item.timestamp|date:"F j, Y - f a" }}</div>
+            <div class="post-body">{{ item.markup }}</div>
+        </div>
+    {% endfor %}
+    {% endautoescape %}
+</div>
 {% endblock id-feed %}

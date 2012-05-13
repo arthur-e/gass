@@ -4,10 +4,11 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^admin/', include(admin.site.urls)),
-    (r'^$',                         'gass.public.views.display_index'),
-#   (r'^test/$',                    'gass.public.views.display_current'),
-#   (r'^about/$',                   'gass.public.views.display_about'),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^$',                         'gass.public.views.display_index',
+        name='public_index'),
+    url(r'^background/$',              'gass.public.views.display_about',
+        name='public_about'),
 #   (r'^access/$',                  'gass.public.views.display_data_access'),
 #   (r'^current/$',                 'gass.public.views.display_current'),
 #   (r'^sidebar/$',                 'gass.public.views.display_sidebar'),
