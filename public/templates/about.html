@@ -5,9 +5,10 @@
     <ul class="navigation">
         <li><a href="{% url public_index %}">Home</a></li>
         <li class="lit"><a href="{% url public_about %}">Background</a></li>
+        <li><a href="{% url public_access %}">Data</a></li>
         <li><a href="/gass/current/">Map & Status</a></li>
         <li><a href="/gass/plots/">Real-Time Plots</a></li>
-        <li><a href="/gass/instrumentation/">Instrumentation</a></li>
+        <li><a href="{% url public_instruments %}">Instrumentation</a></li>
         <li><a href="/gass/team/">Project Team</a></li>
     </ul>
 </div>
