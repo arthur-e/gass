@@ -1,0 +1,509 @@
+{% extends "base.html" %}
+
+{% load custom_tags %}
+
+{% block scripts %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/static/highcharts/2.1.1/js/highcharts.src.js"></script>
+<script type="text/javascript" src="/static/highcharts/2.1.1/js/modules/exporting.js"></script>
+<!--<script type="text/javascript" src="/static/protovis/protovis-3.2/protovis-d3.2.js"></script>-->
+<script type="text/javascript">
+function initialize() {
+    var d = new Date(), defaults, ablationChart, migrationChart;
+    defaults = {
+        plotOptions: {
+            line: {
+                lineWidth: 3,
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            marker: {
+                                enabled: true,
+                                symbol: 'circle',
+                                radius: 3,
+                                lineWidth: 1
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        credits: {
+            floating: true, y: -100,
+            text: 'Powered by Highcharts'
+            },
+        xAxis: {
+            dateTimeLabelFormats: {
+	            second: '%H:%M:%S',
+	            minute: '%H:%M',
+	            hour: '%b-%d <br> %H:%M',
+	            day: '%m-%e',
+	            week: '%b %e',
+	            month: '%b \'%y',
+	            year: '%Y'
+                }
+            },
+        tooltip: {
+            formatter: function() {
+                return '<b>'+ this.series.name +'</b><br>'+
+                Highcharts.dateFormat('%b %e', this.x) +': '+ this.y.toFixed(1) + ' ' + this.series.units;
+                }
+            },
+        legend: {
+            align: 'left', verticalAlign: 'top', floating: true, x: 65,
+            borderWidth: 0, itemStyle: {fontSize: '16px', fontWeight: 'bold'}
+            },
+        exporting: {
+            buttons: {
+                exportButton: {align: 'right', verticalAlign: 'bottom', y: -65},
+                printButton: {align: 'right', verticalAlign: 'bottom', y: -65},
+                }
+            }
+        };
+
+    ablationChart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'ablationChart',
+            defaultSeriesType: 'line',
+            loadMask: true,
+            marginBottom: 60,
+            marginRight: 30
+            },
+        plotOptions: defaults.plotOptions,
+        credits: defaults.credits,
+        title: {
+            text: 'Summer 2011: Ablation', align: 'right',
+            style: {fontSize: '16px', fontWeight: 'bold'}
+            },
+        xAxis: {
+            dateTimeLabelFormats: defaults.xAxis.dateTimeLabelFormats,
+            type: 'datetime',
+            labels: {
+                style: {fontSize: '14px', fontWeight: 'bold'}, y: 30
+                }
+            },
+        yAxis: {
+            labels: {
+                style: {fontSize: '14px', fontWeight: 'bold'}
+                },
+            title: {
+                text: 'Ablation (cm)', margin: 20,
+                style: {fontSize: '16px', fontWeight: 'bold'}
+                },
+            min: 0,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+                }]
+            },
+        tooltip: {
+            formatter: function() {
+                return '<b>'+ this.series.name +'</b><br>'+
+                Highcharts.dateFormat('%b %e', this.x) +': '+ this.y.toFixed(1) + ' cm';
+                }
+            },
+        legend: defaults.legend,
+        exporting: defaults.exporting,
+        series: [
+            {
+            name: 'B01',
+            data: [
+                {% for observation in b1.ablation %}
+                    [
+                    {% for comp in observation %}
+                        {% if not forloop.last %}
+                            Date.UTC({{ comp.year }}, {{ comp.month }} - 1, {{ comp.day }}, {{ comp.hour }}, {{ comp.minute }}, {{ comp.second }}),
+                        {% endif %}
+                        {% if forloop.last %}{{ comp }}{% endif %}
+                    {% endfor %}
+                    ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            },
+            {
+            name: 'B02',
+            data: [
+                {% for observation in b2.ablation %}
+                    [
+                    {% for comp in observation %}
+                        {% if not forloop.last %}
+                            Date.UTC({{ comp.year }}, {{ comp.month }} - 1, {{ comp.day }}, {{ comp.hour }}, {{ comp.minute }}, {{ comp.second }}),
+                        {% endif %}
+                        {% if forloop.last %}{{ comp }}{% endif %}
+                    {% endfor %}
+                    ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            }
+            ]
+        });
+
+    migrationChart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'migrationChart',
+            defaultSeriesType: 'line',
+            loadMask: true,
+            marginBottom: 60
+            },
+        plotOptions: defaults.plotOptions,
+        credits: defaults.credits,
+        title: {
+            text: 'Summer 2011: Net Migration Over Last 10 Days', align: 'right',
+            style: {fontSize: '16px', fontWeight: 'bold'}
+            },
+        xAxis: {
+            // min: Date.UTC({{ b1.min_date.year }}, {{ b1.min_date.month }} - 1, {{ b1.min_date.day }}),
+            max: Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()),
+            type: 'datetime',
+            dateTimeLabelFormats: defaults.xAxis.dateTimeLabelFormats,
+            labels: {
+                style: {fontSize: '14px', fontWeight: 'bold'}, y: 20
+                }
+            },
+        yAxis: [
+            { // Left yAxis (for Migration)
+                min: {{ b1.min_migration }} - 10,
+                labels: {
+                    style: {fontSize: '14px', fontWeight: 'bold'}
+                    },
+                title: {
+                    text: 'Migration (m)', margin: 20,
+                    style: {fontSize: '16px', fontWeight: 'bold'}
+                    },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                    }]
+                },
+            { // Right yAxis (for Migration Rate)
+                min: {{ b1.min_migration_rate }} - 1,
+                max: {{ b1.min_migration_rate }} + 1,
+                labels: {
+                    style: {fontSize: '14px', fontWeight: 'bold'}
+                    },
+                title: {
+                    text: 'Migration Rate (m/day)', margin: 20,
+                    style: {fontSize: '16px', fontWeight: 'bold'}
+                    },
+                opposite: true
+                }
+            ],
+        tooltip: {
+            formatter: function() {
+                var n = this.series.name;
+                if (n.slice(4, n.length) == 'Migration') {
+                    return '<b>'+ this.series.name +'</b><br>'+
+                    Highcharts.dateFormat('%b %e at %H:%M', this.x) +': '+ this.y.toFixed(1) + ' m';
+                    }
+                else {
+                    return '<b>'+ this.series.name +'</b><br>'+
+                    Highcharts.dateFormat('%b %e', this.x) +': '+ this.y.toFixed(1) + ' m/day';
+                    }
+                }
+            },
+        legend: {
+            layout: 'vertical', align: 'left', verticalAlign: 'top',
+            backgroundColor: '#FFF', floating: true, x: 65, y: 35,
+            borderWidth: 0, itemStyle: {fontSize: '16px', fontWeight: 'bold'}
+            },
+        exporting: {
+            buttons: {
+                exportButton: {align: 'right', verticalAlign: 'bottom', y: -25},
+                printButton: {align: 'right', verticalAlign: 'bottom', y: -25},
+                }
+            },
+        series: [
+            {
+            name: 'B01 Migration', zIndex: 9, color: '#4572A7', 
+            data: [
+                {% for observation in b1.migration %}
+                    [
+                    {% for comp in observation %}
+                        {% if not forloop.last %}
+                            Date.UTC({{ comp.year }}, {{ comp.month }} - 1, {{ comp.day }}, {{ comp.hour }}, {{ comp.minute }}, {{ comp.second }}),
+                        {% endif %}
+                        {% if forloop.last %}{{ comp }} {% endif %}
+                    {% endfor %}
+                    ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            },
+            {
+            name: 'B02 Migration', zIndex: 7, color: '#AA4643',
+            data: [
+                {% for observation in b2.migration %}
+                    [
+                    {% for comp in observation %}
+                        {% if not forloop.last %}
+                            Date.UTC({{ comp.year }}, {{ comp.month }} - 1, {{ comp.day }}, {{ comp.hour }}, {{ comp.minute }}, {{ comp.second }}),
+                        {% endif %}
+                        {% if forloop.last %}{{ comp }}{% endif %}
+                    {% endfor %}
+                    ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            },
+            {
+            name: 'B01 Migration Rate', type: 'column', yAxis: 1, zIndex: 1,
+            color: '#4572A7', 
+            data: [
+                {% for observation in b1.migration_rate %}
+                    [
+                    {% for comp in observation %}
+                        {% if not forloop.last %}
+                            Date.UTC({{ comp.year }}, {{ comp.month }} - 1, {{ comp.day }}),
+                        {% endif %}
+                        {% if forloop.last %}{{ comp }}{% endif %}
+                    {% endfor %}
+                    ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            },
+            {
+            name: 'B02 Migration Rate', type: 'column', yAxis: 1, zIndex: 3,
+            color: '#AA4643', 
+            data: [
+                {% for observation in b2.migration_rate %}
+                    [
+                    {% for comp in observation %}
+                        {% if not forloop.last %}
+                            Date.UTC({{ comp.year }}, {{ comp.month }} - 1, {{ comp.day }}),
+                        {% endif %}
+                        {% if forloop.last %}{{ comp }}{% endif %}
+                    {% endfor %}
+                    ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            }
+            ]
+        });
+    }
+</script>
+{% endblock %}
+
+{% block bodyOpener %}
+<body onload="initialize()">
+{% endblock %}
+
+{% block mainContent %}
+<div class="barHeader"><a name="ablation" href="#ablation">Ablation</a></div><br />
+<div class="chart" id="ablationChart"></div><br />
+<div class="barHeader"><a name="net_migration" href="#net_migration">Recent Net Migration</a></div><br />
+A roughly 24-hour simple moving average (SMA) was applied to the migration data in the line plot. The column plot is composed of a strict daily average of the migration data.
+<div class="chart" id="migrationChart"></div><br />
+<!--
+<div class="barHeader"><a name="melt_degree_days" href="#melt_degree_days">Melt Degree Days</a></div><br />
+<div id="fig">
+    <style type="text/css">
+    #fig {width:710px;height:600px;}
+    .caption {position: absolute;font: bold 11px serif;line-height: 1em;text-align: center;background: white;}
+    .caption p {font: 10px sans-serif;line-height: 1.1em;}
+    </style>
+    <script type="text/javascript">
+try {
+
+var b1_cumulative_mdd_series = [
+    {% for mdd in b1.degree_days %}
+    {side: 'right', date: {{ mdd.date }}, mdds: {{ mdd.accum_mdds }}, ablation: {{ mdd.ablation }} }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    ];
+
+var b2_cumulative_mdd_series = [
+    {% for mdd in b2.degree_days %}
+    {side: 'right', date: {{ mdd.date }}, mdds: {{ mdd.accum_mdds }}, ablation: {{ mdd.ablation }} }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    ];
+
+var b1_mdd_series = [
+    {% for mdd in b1.degree_days %}
+    {side: 'right', date: {{ mdd.date }}, mdds: {{ mdd.mdds }}, ablation: {{ mdd.ablation }} }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    ];
+
+var b2_mdd_series = [
+    {% for mdd in b2.degree_days %}
+    {side: 'right', date: {{ mdd.date }}, mdds: {{ mdd.mdds }}, ablation: {{ mdd.ablation }} }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    ];
+
+var w = 675,
+    h = 520,
+    x = pv.Scale.linear(0, {{ b2.max_cumulative_mdds }}*2).range(0, w),
+    y = pv.Scale.linear(-10, {{ b1.max_ablation }} + 10).range(0, h),
+    x2 = pv.Scale.linear(-{{ b2.max_mdds }}*1.5, {{ b2.max_mdds }} + 8).range(0, w);
+
+var vis = new pv.Panel()
+    .width(w)
+    .height(h)
+    .top(20)
+    .left(25)
+    .bottom(80);
+
+vis.anchor("top").add(pv.Label)
+    .top(-20)
+    .text("Cumulative Melt Degree Days (MDDs)")
+    .font("bold 14px sans-serif")
+    .textAlign("left");
+
+vis.anchor("bottom").add(pv.Label)
+    .top(540)
+    .text("Melt Degree Days (MDDs)")
+    .font("bold 14px sans-serif")
+    .textAlign("left");
+
+vis.anchor("left").add(pv.Label)
+    .left(-25)
+    .text("Average Daily Ablation")
+    .font("bold 14px sans-serif")
+    .textAngle(Math.PI + Math.PI/2)
+    .textBaseline("top");
+
+vis.add(pv.Rule)
+    .data(x2.ticks(5))
+    .left(x2)
+    .strokeStyle("#ccc")
+  .anchor("bottom").add(pv.Label)
+    .font("bold 12px sans-serif")
+    .textMargin(6)
+    .textAlign("right")
+    .textBaseline("bottom")
+    .text(function(d) (d < 4) ? null : d+" MDDs");
+
+vis.add(pv.Rule)
+    .data(y.ticks(5))
+    .bottom(y)
+    .strokeStyle("#ccc")
+    .lineWidth(3)
+  .anchor("left").add(pv.Label)
+    .font("bold 12px sans-serif")
+    .textMargin(6)
+    .textAlign("left")
+    .textBaseline("bottom")
+    .text(function(d) d.toFixed(0)+" cm");
+
+vis.add(pv.Rule)
+    .data(x.ticks(5))
+    .left(x)
+    .strokeStyle("#ccc")
+    .lineWidth(3)
+  .anchor("top").add(pv.Label)
+    .font("bold 12px sans-serif")
+    .textMargin(6)
+    .textAlign("left")
+    .textBaseline("top")
+    .text(function(d) d+" MDDs");
+
+var b2_mdds = vis.add(pv.Line)
+    .data(b2_mdd_series)
+    .interpolate("cardinal")
+    .lineWidth(3)
+    .strokeStyle("#AA4643")
+    .left(function(d) x2(d.mdds))
+    .bottom(function(d) y(d.ablation))
+  .add(pv.Dot)
+    .lineWidth(3)
+    .fillStyle("white")
+  .anchor(function(d) d.side).add(pv.Label)
+    .text(function(d) (d.date%3 === 0) ? d.date : null);
+
+var b1_mdds = vis.add(pv.Line)
+    .data(b1_mdd_series)
+    .interpolate("cardinal")
+    .lineWidth(3)
+    .strokeStyle("#4572A7")
+    .left(function(d) x2(d.mdds))
+    .bottom(function(d) y(d.ablation))
+  .add(pv.Dot)
+    .lineWidth(3)
+    .fillStyle("white")
+  .anchor(function(d) d.side).add(pv.Label)
+    .text(function(d) (d.date%3 === 0) ? d.date : null);
+
+var b2_cum_mdds = vis.add(pv.Line)
+    .data(b2_cumulative_mdd_series)
+    .interpolate("cardinal")
+    .lineWidth(5)
+    .strokeStyle("#AA4643")
+    .left(function(d) x(d.mdds))
+    .bottom(function(d) y(d.ablation))
+  .add(pv.Dot)
+    .lineWidth(5)
+    .fillStyle("white")
+  .anchor(function(d) d.side).add(pv.Label)
+    .text(function(d) (d.date%3 === 0) ? d.date : null);
+
+var b1_cum_mdds_line = vis.add(pv.Line)
+    .data(b1_cumulative_mdd_series)
+    .interpolate("cardinal")
+    .lineWidth(5)
+    .strokeStyle("#4572A7")
+    .left(function(d) x(d.mdds))
+    .bottom(function(d) y(d.ablation))
+  .add(pv.Dot)
+    .lineWidth(5)
+    .fillStyle("white")
+  .anchor(function(d) d.side).add(pv.Label)
+    .text(function(d) (d.date%3 === 0) ? d.date : null);
+
+// Legend
+vis.add(pv.Dot)
+    .lineWidth(5)
+    .fillStyle("white")
+    .strokeStyle("#4572A7")
+    .data([{mdds:'B01 Cumulative MDDs'}])
+    .top(540)
+    .left(20)
+  .anchor("right").add(pv.Label)
+    .left(30)
+
+    .text(function(d) d.mdds);
+
+vis.add(pv.Dot)
+    .lineWidth(5)
+    .fillStyle("white")
+    .strokeStyle("#AA4643")
+    .data([{mdds:'B02 Cumulative MDDs'}])
+    .top(560)
+    .left(20)
+  .anchor("right").add(pv.Label)
+    .left(30)
+    .text(function(d) d.mdds);
+
+vis.add(pv.Dot)
+    .lineWidth(3)
+    .fillStyle("white")
+    .strokeStyle("#AA4643")
+    .data([{mdds:'B01 MDDs'}])
+    .top(540)
+    .left(200)
+  .anchor("right").add(pv.Label)
+    .left(210)
+    .text(function(d) d.mdds);
+
+vis.add(pv.Dot)
+    .lineWidth(3)
+    .fillStyle("white")
+    .strokeStyle("#4572A7")
+    .data([{mdds:'B02 MDDs'}])
+    .top(560)
+    .left(200)
+  .anchor("right").add(pv.Label)
+    .left(210)
+    .text(function(d) d.mdds);
+
+vis.render();
+
+}
+
+catch (errMsg) {
+var vis = null;
+}
+
+    </script>
+</div>
+-->
+{% endblock %}

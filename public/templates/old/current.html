@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% load custom_tags %}
+
+{% block scripts %}
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+var allMarks = [], toggleAll;
+function initialize() {
+    var i,
+        baseMap,
+        b1Track,
+        b2Track,
+        coords,
+        map,
+        mapOptions,
+        marks,
+        marker,
+        titles,
+        otherMarks,
+        otherTitles,
+        removeAll;
+
+    /**
+     * Toggles the visibility of markers in the allMarks array.
+     * @param   {Boolean}   state   When true, displays marks, when false, hides
+     */
+    toggleAll = function(state) {
+        var i;
+        for (i=0; i<allMarks.length; i+=1) {
+            allMarks[i].setVisible(state);
+            }
+        }
+
+    /**
+     * Removes all markers in the set of markers that can be removed.
+     * @param   {Object}    map     The map from which to remove markers
+     */
+    removeAll = function(map) {
+        for (i=0; i<allMarks.length; i+=1) {
+            allMarks[i].setMap(null);
+            }
+        };
+
+    // The overlay of updated Landsat imagery
+    baseMap = new google.maps.GroundOverlay(
+        '/gass/media/bering_l5_p64_r18_2011_05_25.jpg',
+        new google.maps.LatLngBounds(
+            new google.maps.LatLng(60.01737, -143.66668),
+            new google.maps.LatLng(60.33200, -143.18198)
+            )
+        );
+
+    // Coordinates for notable locations
+    coords = {
+        b1_first: new google.maps.LatLng({{ b1.first.lat }}, -{{ b1.first.lng }}),
+        b1_latest: new google.maps.LatLng({{ b1.latest.lat }}, -{{ b1.latest.lng }}),
+        b2_first: new google.maps.LatLng({{ b2.first.lat }}, -{{ b2.first.lng }}),
+        b2_latest: new google.maps.LatLng({{ b2.latest.lat }}, -{{ b2.latest.lng }}),
+        field_camp: new google.maps.LatLng(60.12068, -143.28403)
+        };
+
+    // Holder for important markers, titles
+    marks = [coords.b1_latest, coords.b2_latest, coords.field_camp];
+    titles = ['B1 Last', 'B2 Last', 'Field Camp'];
+
+    b1Track = new google.maps.Polyline({
+        path: [
+            coords.b1_first,
+            {% for coord_pair in b1.track %}
+                new google.maps.LatLng( {{ coord_pair.lat__avg }}, -{{ coord_pair.lng__avg }}
+                ),
+            {% endfor %}
+            coords.b1_latest
+            ],
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.7,
+        strokeWeight: 3
+        });
+    
+    b2Track = new google.maps.Polyline({
+        path: [
+            coords.b2_first,
+            {% for coord_pair in b2.track %}
+                new google.maps.LatLng( {{ coord_pair.lat__avg }}, -{{ coord_pair.lng__avg }}
+                ),
+            {% endfor %}
+            coords.b2_latest
+            ],
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.7,
+        strokeWeight: 3
+        });
+    
+    // General map options
+    mapOptions = {
+        zoom: 7,
+        // maxZoom: 13, // Needed when Google imagery is not available at a certain zoom level
+        center: coords.b1_latest,
+        mapTypeId: google.maps.MapTypeId.HYBRID
+        };
+
+    // Map object
+    map = new google.maps.Map(document.getElementById("basemap"), mapOptions);
+
+    {% for coord_pair in b1.track %}
+        marker = new google.maps.Marker({
+            icon: 'http://maps.google.com/mapfiles/kml/pal4/icon49.png',
+            position: new google.maps.LatLng( {{ coord_pair.lat__avg }}, -{{ coord_pair.lng__avg }} ),
+            map: map
+            });
+        marker.setVisible(false);
+        allMarks.push(marker);
+    {% endfor %}
+
+    {% for coord_pair in b2.track %}
+        marker = new google.maps.Marker({
+            icon: 'http://maps.google.com/mapfiles/kml/pal4/icon49.png',
+            position: new google.maps.LatLng( {{ coord_pair.lat__avg }}, -{{ coord_pair.lng__avg }} ),
+            map: map
+            });
+        marker.setVisible(false);
+        allMarks.push(marker);
+    {% endfor %}
+
+    b1Track.setMap(map);
+    b2Track.setMap(map);
+    baseMap.setMap(map); // Adds the overlay to the map
+    //map.fitBounds(new google.maps.LatLngBounds(coords.b1_latest, coords.b2_first));
+    map.setCenter(coords.b1_latest);
+    map.setZoom(10);
+
+    /**
+     * Set markers, events on map
+     */
+    (function() {
+        var i, j, k, b1, b2, camp, markers, events, terminus2010, terminus2011;
+
+        //terminus2010 = new google.maps.KmlLayer('http://geodjango.mtri.org/gass/media/2010_terminus.kml');
+        //terminus2010.setMap(map);
+        //terminus2011 = new google.maps.KmlLayer('http://geodjango.mtri.org/gass/media/2011_terminus.kml');
+        //terminus2011.setMap(map);
+
+        // B1 marker
+        b1 = new google.maps.Marker({
+            animation: google.maps.Animation.DROP,
+            flat: false,
+            icon: '/gass/media/img/flag_b1.png',
+            position: marks[0],
+            title: titles[0]
+            });
+
+        // B2 marker
+        b2 = new google.maps.Marker({
+            animation: google.maps.Animation.DROP,
+            flat: false,
+            icon: '/gass/media/img/flag_b2.png',
+            position: marks[1],
+            title: titles[1]
+            });
+
+        // Field camp marker
+        camp = new google.maps.Marker({
+            animation: google.maps.Animation.DROP,
+            flat: false,
+            icon: 'http://maps.google.com/mapfiles/ms/micons/campground.png',
+            position: marks[2],
+            title: titles[2]
+            });
+
+        markers = [b1, b2, camp];
+
+        for (i=0; i<markers.length; i+=1) {
+            markers[i].setMap(map); // Add the marker to the map
+            }
+
+        google.maps.event.addListener(b1, 'click', function() {
+            map.setCenter(b1.getPosition());
+            map.setZoom(16);
+            });
+
+        google.maps.event.addListener(b2, 'click', function() {
+            map.setCenter(b2.getPosition());
+            map.setZoom(16);
+            });
+
+        }())
+    }
+</script>
+{% endblock %}
+
+{% block body %}
+<body onload="initialize()">
+{% endblock %}
+
+{% block navigator %}
+<div id="navigator">
+    <ul class="navigation">
+        <li><a href="/gass/">Home</a></li>
+        <li><a href="/gass/about/">Background</a></li>
+        <li><a href="/gass/access/">Data</a></li>
+        <li class="lit"><a href="/gass/current/">Map & Status</a></li>
+        <li><a href="/gass/plots/">Real-Time Plots</a></li>
+        <li><a href="/gass/instrumentation/">Instrumentation</a></li>
+        <li><a href="/gass/team/">Project Team</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block topCanvas %}
+<div class="outerContainer" id="topCanvas">
+    <div class="barHeader soft"></div>
+    <div class="barHeaderText"><a href="/gass/">Bering Glacier Monitoring</a></div>
+    <div id="currentConditions">
+        <span class="title">Map of Current Locations</span>
+        The current positions of sites B1 and B2 are displayed on the map below. The ground overlay is the latest cloud-free Landsat 5 image of the Bering Glacier, dated May 25, 2011. <b>Zoom in</b> on the sites to see their migration tracks as a red line (you can zoom in to an ablation site by <b>clicking its marker</b> on the map). To see the average daily position of the sites since they were installed (which may help you to see how fast the sites are moving) toggle the option below.<br />
+        <span class="toggle">Average Daily Position:&nbsp;&nbsp;&nbsp;<a onclick="toggleAll(true)">Show</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a onclick="toggleAll(false)">Hide</a></span><br /><br />
+        <div id="basemap"></div>
+        <span class="header"><a name="b1observations" href="#b1observations">B01 Current Conditions</a></span>
+        <div class="excite">
+            Migration and ablation since installation on May 12, 2011 and rates over last 24 hours:<br /><br />
+            <a nohref><div class="exciteItem" id="exciteMigration">MIGRATION: <span class="black">{{ b1.migration_m|floatformat:1 }} m</span><br />AT <span class="black">{{ b1.migration_rate|floatformat:1 }} m/day</span></div></a>
+            <a nohref><div class="exciteItem" id="exciteAblation">TOTAL MELT: <span class="black">{{ b1.ablation_cm|floatformat:0 }} cm</span><br />AT <span class="black">{{ b1.ablation_rate|floatformat:1 }} cm/day</span></div></a>
+            <div class="clear"></div>
+            Current conditions at GASS site B01 as of <b>{{ b1.latest.date }}</b> at <b>{{ b1.latest.time }} UTC</b>:<br /><br />
+            <a nohref><div class="exciteItem" id="exciteTemperature"><span class="black">{{ b1.latest.temp_C }}°C | {{ b1.latest.temp_C|convert:"degC_degF"|floatformat:0 }}°F</span><br />TEMPERATURE</div></a>
+            <a nohref><div class="exciteItem" id="exciteVoltage"><span class="black">{{ b1.latest.voltage|floatformat:1 }} V</span><br />VOLTAGE</div></a>
+            <a nohref><div class="exciteItem" id="exciteWind"><span class="black">{{ b1.latest.wind_m_s|floatformat:1 }} m/s | {{ b1.latest.wind_m_s|convert:"m/s_knots"|floatformat:1 }} knots</span><br />WIND SPEED</div></a>
+            <!--<a nohref><div class="exciteItem" id="exciteIrradiance"><span class="black">{{ latest.top_light|floatformat:0 }} &#956;W/cm<img class="sup2" src="http://geodjango.mtri.org/gass/media/sup2.gif" /></span><br />SOLAR IRRADIANCE</div></a><br />-->
+            <!--<a nohref><div class="exciteItem" id="exciteReflectance"><span class="black">{{ latest.bottom_light|floatformat:0 }} &#956;W/cm<img class="sup2" src="http://geodjango.mtri.org/gass/media/sup2.gif" /></span><br />REFLECTANCE</div></a><br />-->
+            <a nohref><div class="exciteItem" id="exciteAlbedo"><span class="black">{{ b1.latest_albedo|floatformat:2 }}  <sup></sup></span><br />ALBEDO</div></a>
+            <div class="clear"></div><br />
+        </div>
+        <span class="header"><a name="b2observations" href="#b2observations">B02 Current Conditions</a></span>
+        <div class="excite">
+            Migration and ablation since installation on May 12, 2011 and rates over last 24 hours:<br /><br />
+            <a nohref><div class="exciteItem" id="exciteMigration">MIGRATION: <span class="black">{{ b2.migration_m|floatformat:1 }} m</span><br />AT <span class="black">{{ b2.migration_rate|floatformat:1 }} m/day</span></div></a>
+            <a nohref><div class="exciteItem" id="exciteAblation">TOTAL MELT: <span class="black">{{ b2.ablation_cm|floatformat:0 }} cm</span><br />AT <span class="black">{{ b2.ablation_rate|floatformat:1 }} cm/day</span></div></a>
+            <div class="clear"></div>
+            Current conditions at GASS site B02 as of <b>{{ b2.latest.date }}</b> at <b>{{ b2.latest.time }} UTC</b>:<br /><br />
+            <a nohref><div class="exciteItem" id="exciteTemperature"><span class="black">{{ b2.latest.temp_C }}°C | {{ b2.latest.temp_C|convert:"degC_degF"|floatformat:0 }}°F</span><br />TEMPERATURE</div></a>
+            <a nohref><div class="exciteItem" id="exciteVoltage"><span class="black">{{ b2.latest.voltage|floatformat:1 }} V</span><br />VOLTAGE</div></a>
+            <a nohref><div class="exciteItem" id="exciteWind"><span class="black">{{ b2.latest.wind_m_s|floatformat:1 }} m/s | {{ b2.latest.wind_m_s|convert:"m/s_knots"|floatformat:1 }} knots</span><br />WIND SPEED</div></a>
+            <!--<a nohref><div class="exciteItem" id="exciteIrradiance"><span class="black">{{ latest.top_light|floatformat:0 }} &#956;W/cm<img class="sup2" src="http://geodjango.mtri.org/gass/media/sup2.gif" /></span><br />SOLAR IRRADIANCE</div></a><br />-->
+            <!--<a nohref><div class="exciteItem" id="exciteReflectance"><span class="black">{{ latest.bottom_light|floatformat:0 }} &#956;W/cm<img class="sup2" src="http://geodjango.mtri.org/gass/media/sup2.gif" /></span><br />REFLECTANCE</div></a><br />-->
+            <a nohref><div class="exciteItem" id="exciteAlbedo"><span class="black">{{ b2.latest_albedo|floatformat:2 }}  <sup></sup></span><br />ALBEDO</div></a>
+            <div class="clear"></div><br />
+        </div>
+        <div class="note"><span class="beringWebsite"><a href="http://www.beringglacier.org/">www.BeringGlacier.org</a></span>This website and its content are not administered or endorsed by either the U.S. Bureau of Land Management or the U.S. Geological Survey.</div>
+    </div>
+    <div id="logos">
+        <a href="http://www.mtri.org/" target="_blank"><img id="mtriLogo" src="/gass/media/img/logo_MTRI_gray.png" /></a>
+        <a href="http://www.blm.gov/ak/st/en.html" target="_blank"><img id="blmLogo" src="/gass/media/img/logo_BLM_gray.png" /></a>
+        <a href="http://www.usgs.gov/" target="_blank"><img id="usgsLogo" src="/gass/media/img/logo_USGS_gray.png" /></a>
+    </div>
+</div>
+{% endblock %}

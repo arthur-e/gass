@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% load custom_tags %}
+
+{% block mainContent %}
+<span class="header"><a name="records" href="#records">ALL RECORDS FROM B01</a></span><br />
+Once every hour, a GASS unit &quot;wakes up&quot; from low-power mode and records the:
+<ul>
+    <li>Date</li>
+    <li>Time on Greenich Mean Time or UTC<sup>&nbsp;</sup></li>
+    <li>Ambient air temperature in °C (<b>TEMP</b>)<sup>&nbsp;</sup></li>
+    <li>Wind speed in m/s (<b>WIND</b>)<sup>&nbsp;</sup></li>
+    <li>Distance to ice surface in cm (<b>RNG</b>)<sup>&nbsp;</sup></li>
+    <li>Solar irradiation in &#956;W/cm<sup>2</sup> (<b>TOP</b>)<sup>&nbsp;</sup></li>
+    <li>Reflectance in &#956;W/cm<sup>2</sup> (<b>BTTM</b>)<sup>&nbsp;</sup></li>
+    <li>Latitude of current position (<b>LAT</b>)<sup>&nbsp;</sup></li>
+    <li>Longitude of current position (<b>LONG</b>)<sup>&nbsp;</sup></li>
+</ul>
+    <table id="bulkDataTable">
+        <a name="dataTable"><tr>
+            <td class="bulkDataTableHeaderLeft">SITE</td>
+            <td class="bulkDataTableHeaderLeft">DATE</td>
+            <td class="bulkDataTableHeaderLeft">TIME</td>
+            <td class="bulkDataTableHeaderRight">TEMP</td>
+            <td class="bulkDataTableHeaderRight">WIND</td>
+            <td class="bulkDataTableHeaderRight">RNG</td>
+            <td class="bulkDataTableHeaderRight">TOP</td>
+            <td class="bulkDataTableHeaderRight">BTTM</td>
+            <td class="bulkDataTableHeaderRight">LAT</td>
+            <td class="bulkDataTableHeaderRight">LONG</td>
+        </tr></a>
+<!--    <tr>
+            <td class="bulkDataTableSubHeaderLeft"></td>
+            <td class="bulkDataTableSubHeaderLeft"></td>
+            <td class="bulkDataTableSubHeaderLeft">UTC / GMT</td>
+            <td class="bulkDataTableSubHeaderRight">(°C)</td>
+            <td class="bulkDataTableSubHeaderRight">(m/s)</td>
+            <td class="bulkDataTableSubHeaderRight">(cm)</td>
+            <td class="bulkDataTableSubHeaderRight">(&#956;W/cm<sup>2</sup>)</td>
+            <td class="bulkDataTableSubHeaderRight">(&#956;W/cm<sup>2</sup>)</td>
+            <td class="bulkDataTableSubHeaderRight"></td>
+            <td class="bulkDataTableSubHeaderRight"></td>
+        </tr>
+-->
+        {% for measurement in all_measurements %}
+        <tr>
+            <td class="bulkDataTableValueLeft">{{ measurement.site }}</td>
+            <td class="bulkDataTableValueLeft">{{ measurement.date }}</td>
+            <td class="bulkDataTableValueLeft">{{ measurement.time }}</td>
+            <td class="bulkDataTableValueRight">{{ measurement.temp_C }}</td>
+            <td class="bulkDataTableValueRight">{{ measurement.wind_m_s|floatformat:1 }}</td>
+            <td class="bulkDataTableValueRight">{{ measurement.range_cm }}</td>
+            <td class="bulkDataTableValueRight">{{ measurement.top_uW_cm2|floatformat:0 }}</td>
+            <td class="bulkDataTableValueRight">{{ measurement.bottom_uW_cm2|floatformat:0 }}</td>
+<!--        <td class="bulkDataTableValueRight">{{ measurement.lat_deg }}°{{ measurement.lat_min }}'N</td>
+            <td class="bulkDataTableValueRight">{{ measurement.long_deg }}°{{ measurement.long_min }}'W</td> -->
+            <td class="bulkDataTableValueRight">{{ measurement.latitude|floatformat:5 }}°N</td>
+            <td class="bulkDataTableValueRight">{{ measurement.longitude|floatformat:5 }}°W</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+{% endblock %}

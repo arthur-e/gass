@@ -1,0 +1,27 @@
+<link href="/gass/media/css/strict.css" rel="stylesheet" type="text/css" />
+{% load custom_tags %}
+<body class="sidebarBody">
+<div class="sidebarTitle">{% if b1.latest.date > b2.latest.date %}{{ b1.latest.date }}{% else %}{{ b2.latest.date }}{% endif %}</div>
+<div class="sidebarContent">
+    <div class="siteName">Terminus Status</div>
+    <div class="sidebarItem" id="sidebarMigration">MIGRATION: <span class="black">{{ b1.migration_m|floatformat:0 }} m</span><br />AT <span class="black">{{ b1.migration_rate|floatformat:1 }} m/day</span></div>
+    <div class="sidebarItem" id="sidebarAblation">TOTAL MELT: <span class="black">{{ b1.ablation_cm|floatformat:0 }} cm</span><br />AT <span class="black">{{ b1.ablation_rate|floatformat:1 }} cm/day</span></div>
+    <div class="clear"></div>
+    <b>{{ b1.latest.date|date:"M d" }}</b> at <b>{{ b1.latest.time|time:"H:i" }} UTC</b>:<br /><br />
+    <div class="sidebarItem" id="sidebarTemperature"><span class="black">{{ b1.latest.temp_C }}°C | {{ b1.latest.temp_C|convert:"degC_degF"|floatformat:0 }}°F</span><br />TEMPERATURE</div><br />
+    <!--<div class="sidebarItem" id="sidebarVoltage"><span class="black">{{ b1.latest.voltage|floatformat:1 }} V</span><br />VOLTAGE</div></a>-->
+    <div class="sidebarItem" id="sidebarWind"><span class="black">{{ b1.latest.wind_m_s|floatformat:1 }} m/s | {{ b1.latest.wind_m_s|convert:"m/s_knots"|floatformat:1 }} knots</span><br />WIND SPEED</div>
+    <!--<div class="sidebarItem" id="sidebarAlbedo"><span class="black">{{ b1.latest_albedo|floatformat:2 }}  <sup></sup></span><br />ALBEDO</div></a>-->
+    <div class="clear"></div><br />
+    <div class="siteName">Up-Glacier Status</div>
+    <div class="sidebarItem" id="sidebarMigration">MIGRATION: <span class="black">{{ b2.migration_m|floatformat:0 }} m</span><br />AT <span class="black">{{ b2.migration_rate|floatformat:1 }} m/day</span></div><br />
+    <div class="sidebarItem" id="sidebarAblation">TOTAL MELT: <span class="black">{{ b2.ablation_cm|floatformat:0 }} cm</span><br />AT <span class="black">{{ b2.ablation_rate|floatformat:1 }} cm/day</span></div>
+    <div class="clear"></div>
+    <b>{{ b2.latest.date|date:"M d" }}</b> at <b>{{ b2.latest.time|time:"H:i" }} UTC</b>:<br /><br />
+    <div class="sidebarItem" id="sidebarTemperature"><span class="black">{{ b2.latest.temp_C }}°C | {{ b2.latest.temp_C|convert:"degC_degF"|floatformat:0 }}°F</span><br />TEMPERATURE</div>
+    <!--<a nohref><div class="sidebarItem" id="sidebarVoltage"><span class="black">{{ b2.latest.voltage|floatformat:1 }} V</span><br />VOLTAGE</div></a>-->
+    <div class="sidebarItem" id="sidebarWind"><span class="black">{{ b2.latest.wind_m_s|floatformat:1 }} m/s | {{ b2.latest.wind_m_s|convert:"m/s_knots"|floatformat:1 }} knots</span><br />WIND SPEED</div>
+    <!--<a nohref><div class="sidebarItem" id="sidebarAlbedo"><span class="black">{{ b2.latest_albedo|floatformat:2 }}  <sup></sup></span><br />ALBEDO</div></a>-->
+    <div class="clear"></div><br />
+</div>
+</body>

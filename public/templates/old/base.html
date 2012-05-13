@@ -1,0 +1,86 @@
+{% load custom_tags %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Bering Glacier Monitoring - Michigan Tech Research Institute (MTRI)</title>
+{% block css %}
+    <!-- Conditional commenting for non-IE browsers -->
+    <!--[if (!IE)]><!-->
+    <link href="/gass/media/css/gass.css" rel="stylesheet" type="text/css" />
+    <!--<![endif]-->
+
+    <!-- Conditional commenting for IE browsers -->
+    <!--[if lte IE 9]>
+    <link href="/gass/media/css/gass_IE.css" rel="stylesheet" type="text/css" />
+    <![endif]-->
+{% endblock %}
+</head>
+
+{% block scripts %}
+{% endblock %}
+
+{% block body %}
+<body>
+{% endblock %}
+
+{% block navigator %}
+<div id="navigator">
+    <ul class="navigation">
+        <li class="lit"><a href="/gass/">Home</a></li>
+        <li><a href="/gass/about/">Background</a></li>
+        <li><a href="/gass/current/">Map & Status</a></li>
+        <li><a href="/gass/plots/">Real-Time Plots</a></li>
+        <li><a href="/gass/instrumentation/">Instrumentation</a></li>
+        <li><a href="/gass/team/">Project Team</a></li>
+    </ul>
+</div>
+{% endblock %}
+{% block topCanvas %}
+<div class="outerContainer" id="topCanvas">
+    <div class="barHeader soft"></div>
+    <div class="barHeaderText"><a href="/gass/">Bering Glacier Monitoring</a></div>
+    <div class="innerContainer" id="currentConditions">
+        <span class="siteName"><a name="b1observations" href="#b1observations">B01 Current Conditions</a></span>
+<!--
+        <a href="/gass/export/b01"><img class="icon" src="/gass/media/export_excel.png" alt="Export all B01 data to a CSV file"/></a>
+        <a href="/gass/plot/condition"><img class="icon" src="/gass/media/chart_line.png" alt="View these conditions on a plot"/></a>
+-->
+        <div class="excite">
+            Migration and ablation since installation on May 12, 2011 and rates over last 24 hours:<br /><br />
+            <a nohref><div class="exciteItem" id="exciteMigration">MIGRATION: <span class="black">{{ b1.migration_m|floatformat:1 }} m</span><br />AT <span class="black">{{ b1.migration_rate|floatformat:1 }} m/day</span></div></a>
+            <a nohref><div class="exciteItem" id="exciteAblation">TOTAL MELT: <span class="black">{{ b1.ablation_cm|floatformat:0 }} cm</span><br />AT <span class="black">{{ b1.ablation_rate|floatformat:1 }} cm/day</span></div></a>
+            <div class="clear"></div>
+            Current conditions at GASS site B01 as of <b>{{ b1.latest.date }}</b> at <b>{{ b1.latest.time }} UTC</b>:<br /><br />
+            <a nohref><div class="exciteItem" id="exciteTemperature"><span class="black">{{ b1.latest.temp_C }}°C | {{ b1.latest.temp_C|convert:"degC_degF"|floatformat:0 }}°F</span><br />TEMPERATURE</div></a>
+            <a nohref><div class="exciteItem" id="exciteVoltage"><span class="black">{{ b1.latest.voltage|floatformat:1 }} V</span><br />VOLTAGE</div></a>
+            <a nohref><div class="exciteItem" id="exciteWind"><span class="black">{{ b1.latest.wind_m_s|floatformat:1 }} m/s | {{ b1.latest.wind_m_s|convert:"m/s_knots"|floatformat:1 }} knots</span><br />WIND SPEED</div></a>
+            <!--<a nohref><div class="exciteItem" id="exciteIrradiance"><span class="black">{{ latest.top_light|floatformat:0 }} &#956;W/cm<img class="sup2" src="http://geodjango.mtri.org/gass/media/sup2.gif" /></span><br />SOLAR IRRADIANCE</div></a><br />-->
+            <!--<a nohref><div class="exciteItem" id="exciteReflectance"><span class="black">{{ latest.bottom_light|floatformat:0 }} &#956;W/cm<img class="sup2" src="http://geodjango.mtri.org/gass/media/sup2.gif" /></span><br />REFLECTANCE</div></a><br />-->
+            <a nohref><div class="exciteItem" id="exciteAlbedo"><span class="black">{{ b1.latest_albedo|floatformat:2 }}  <sup></sup></span><br />ALBEDO</div></a>
+            <div class="clear"></div><br />
+        </div>
+        <span class="siteName"><a name="b2observations" href="#b2observations">B02 Current Conditions</a></span>
+<!--
+        <a href="/gass/export/b02"><img class="icon" src="/gass/media/export_excel.png" alt="Export all B02 data to a CSV file"/></a>
+        <a href="/gass/plot/condition"><img class="icon" src="/gass/media/chart_line.png" alt="View these conditions on a plot"/></a>
+-->
+        <div class="excite">
+            Migration and ablation since installation on May 12, 2011 and rates over last 24 hours:<br /><br />
+            <a nohref><div class="exciteItem" id="exciteMigration">MIGRATION: <span class="black">{{ b2.migration_m|floatformat:1 }} m</span><br />AT <span class="black">{{ b2.migration_rate|floatformat:1 }} m/day</span></div></a>
+            <a nohref><div class="exciteItem" id="exciteAblation">TOTAL MELT: <span class="black">{{ b2.ablation_cm|floatformat:0 }} cm</span><br />AT <span class="black">{{ b2.ablation_rate|floatformat:1 }} cm/day</span></div></a>
+            <div class="clear"></div>
+            Current conditions at GASS site B02 as of <b>{{ b2.latest.date }}</b> at <b>{{ b2.latest.time }} UTC</b>:<br /><br />
+            <a nohref><div class="exciteItem" id="exciteTemperature"><span class="black">{{ b2.latest.temp_C }}°C | {{ b2.latest.temp_C|convert:"degC_degF"|floatformat:0 }}°F</span><br />TEMPERATURE</div></a>
+            <a nohref><div class="exciteItem" id="exciteVoltage"><span class="black">{{ b2.latest.voltage|floatformat:1 }} V</span><br />VOLTAGE</div></a>
+            <a nohref><div class="exciteItem" id="exciteWind"><span class="black">{{ b2.latest.wind_m_s|floatformat:1 }} m/s | {{ b2.latest.wind_m_s|convert:"m/s_knots"|floatformat:1 }} knots</span><br />WIND SPEED</div></a>
+            <!--<a nohref><div class="exciteItem" id="exciteIrradiance"><span class="black">{{ latest.top_light|floatformat:0 }} &#956;W/cm<img class="sup2" src="http://geodjango.mtri.org/gass/media/sup2.gif" /></span><br />SOLAR IRRADIANCE</div></a><br />-->
+            <!--<a nohref><div class="exciteItem" id="exciteReflectance"><span class="black">{{ latest.bottom_light|floatformat:0 }} &#956;W/cm<img class="sup2" src="http://geodjango.mtri.org/gass/media/sup2.gif" /></span><br />REFLECTANCE</div></a><br />-->
+            <a nohref><div class="exciteItem" id="exciteAlbedo"><span class="black">{{ b2.latest_albedo|floatformat:2 }}  <sup></sup></span><br />ALBEDO</div></a>
+            <div class="clear"></div><br />
+        </div>
+    </div>
+</div>
+{% endblock %}
+</body>
+</html>

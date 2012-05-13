@@ -1,0 +1,112 @@
+@charset "utf-8";
+@font-face {
+font-family: "MerriweatherRegular";
+font-style: normal;
+font-weight: normal;
+src: url("/gass/media/font/Merriweather-webfont.eot?#iefix") format("embedded-opentype"), url("/gass/media/font/Merriweather-webfont.woff") format("woff"), url("/gass/media/font/Merriweather-webfont.ttf") format("truetype"), url("/gass/media/font/Merriweather-webfont.svg#MerriweatherRegular") format("svg");
+}
+@font-face {
+font-family: "MerriweatherLight";
+font-style: normal;
+font-weight: normal;
+src: url("/gass/media/font/Merriweather-Light-webfont.eot?#iefix") format("embedded-opentype"), url("/gass/media/font/Merriweather-Light-webfont.woff") format("woff"), url("/gass/media/font/Merriweather-Light-webfont.ttf") format("truetype"), url("/gass/media/font/Merriweather-Light-webfont.svg#MerriweatherLight") format("svg");
+}
+@font-face {
+font-family: "MerriweatherBold";
+font-style: normal;
+font-weight: normal;
+src: url("/gass/media/font/Merriweather-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("/gass/media/font/Merriweather-Bold-webfont.woff") format("woff"), url("/gass/media/font/Merriweather-Bold-webfont.ttf") format("truetype"), url("/gass/media/font/Merriweather-Bold-webfont.svg#MerriweatherBold") format("svg");
+}
+@font-face {
+font-family: "MerriweatherBlack";
+font-style: normal;
+font-weight: normal;
+src: url("/gass/media/font/Merriweather-Black-webfont.eot?#iefix") format("embedded-opentype"), url("/gass/media/font/Merriweather-Black-webfont.woff") format("woff"), url("/gass/media/font/Merriweather-Black-webfont.ttf") format("truetype"), url("/gass/media/font/Merriweather-Black-webfont.svg#MerriweatherBlack") format("svg");
+}
+
+a:link, a:visited {color:#036;text-decoration:none;border:none;}
+a:hover, a:active {color:#F00;text-decoration:none;border-bottom:1px dotted #F00;}
+body {margin:0;padding:0;overflow-x:hidden;font-family:Helvetica,Arial,sans-serif;background-color:#666;text-align:right;color:black;}
+div {padding:0;margin:0;}
+ul {margin:0;padding:0;list-style:square outside;text-align:left;}
+
+.attribute {display:inline-block;vertical-align:top;margin:20px;color:#CCC;}
+#attribution {min-height:150px;background-color:transparent;border-top:1px solid #FFF;text-align:left;}
+.container {width:90%;float:right;overflow:hidden;position:relative;top:30px;}
+#credits {float:right;width:220px;margin:20px 0px 10px 20px;text-align:center;clear:right;}
+.date {color:#036;font-family:MerriweatherRegular,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;}
+#disclaimer {margin:20px;font-size:75%;color:#AAA;text-align:right;}
+#disclaimer a:link,
+#disclaimer a:visited {color:#EEE;}
+#disclaimer a:hover,
+#disclaimer a:active {color:#EEE;border-bottom:1px dotted #EEE;}
+#canvas {background:#FFF;background-image:url(/gass/media/img/noyles.jpg);background-repeat:no-repeat;}
+#content {float:right;width:60%;padding:20px;background:rgba(255,255,255,0.8);}
+#feature {float:left;width:30%;padding:20px;position:relative;top:50px;background:rgba(204,204,204,0.6);font-family:MerriweatherRegular,Georgia,serif;font-size:16px;color:black;text-shadow:0 0 6px rgba(0, 0, 0, 0.3);border-bottom:5px solid #666;text-align:left;}
+#header {z-index:3;background:transparent;height:55px;margin:20px 0;padding:0 0 0 20px;line-height:65px;letter-spacing:0px;word-spacing:5px;font-size:48px;font-weight:bold;text-align:left;text-shadow:0 0 24px #FFF,0 0 18px #FFF,0 0 12px #FFF;}
+#location-map {z-index:99;width:220px;height:125px;float:right;margin:0 0 10px 10px;}
+#logo-mtri, #logo-blm, #logo-usgs {display:block;float:right;border:none;margin-bottom:20px;padding:0px 40px;}
+#logo-mtri, #logo-blm, #logo-usgs, {vertical-align:bottom;float:right;display:block;}
+#logo-mtri {width:140px;height:102px;}
+#logo-blm {width:140px;height:122px;}
+#logo-usgs {width:140px;height:42px;}
+#navigator {z-index:9999;position:fixed;height:25px;width:100%;margin:0;padding:0 0 5px;background:#000;}
+.menu-ribbon,
+.menu {list-style:none;line-height:24px;font-weight:bold;font-size:12px;color:#333;text-shadow:1px 1px 0 #FFF;
+    background:#EEE;
+    border-color:#D4D4D4 #D4D4D4 #BCBCBC;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    border-style:solid;
+    border-width:1px;
+    -moz-box-shadow:0px 3px 3px #333;
+    -webkit-box-shadow:0px 3px 3px #333;
+    box-shadow:0px 3px 3px #333;
+    filter: progid: DXImageTransform.Microsoft.Shadow(strength = 2, direction = 180, color = '#333333');
+    -ms-filter: "progid: DXImageTransform.Microsoft.Shadow(strength = 2, Direction = 180, Color = '#333333')";
+}
+.menu a {display:block;padding:2px 5px 0 5px;color:#333;}
+.menu a:link,
+.menu a:visited {color:#333 !important;border-top:1px solid #CCC;border-bottom:1px solid transparent;}
+.menu a:hover,
+.menu a:active {color:#333 !important;background:#BDF;}
+.menu .heading,
+.tool {display:inline-block;height:25px;width:150px;font-size:14px;font-style:italic;font-weight:bold;padding:2px 5px 0 5px;font-family:Helvetica,Arial,arial,freesans,clean,sans-serif;text-shadow:1px 1px 0 #FFFFFF;
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr = '#EEEEEE', endColorstr = '#AAAAAA');
+    -ms-filter: "progid: DXImageTransform.Microsoft.gradient(startColorstr = '#EEEEEE', endColorstr = '#AAAAAA')";
+    background-image: -moz-linear-gradient(top, #EEEEEE, #AAAAAA);
+    background-image: -ms-linear-gradient(top, #EEEEEE, #AAAAAA);
+    background-image: -o-linear-gradient(top, #EEEEEE, #AAAAAA);
+    background-image: -webkit-gradient(linear, center top, center bottom, from(#EEEEEE), to(#AAAAAA));
+    background-image: -webkit-linear-gradient(top, #EEEEEE, #AAAAAA);
+    background-image: linear-gradient(top, #EEEEEE, #AAAAAA);
+}
+.navigation {position:absolute;left:10%;margin:0;padding:5px 0 0 20px;list-style:none;color:#FFF;text-align:left;font-family:Helvetica,Arial,sans-serif;font-weight:bold;font-size:16px;}
+.navigation li {display:inline;padding:0 20px 0 0;line-height:18px;}
+.navigation li a:link,
+.navigation li a:visited {border:none;text-decoration:none;color:white;padding:0 0 4px;}
+.navigation li a:hover, 
+.navigation li a:active,
+.navigation .lit a:link,
+.navigation .lit a:visited,
+.navigation .lit a:hover, 
+.navigation .lit a:active {border-bottom:5px solid red;color:red;}
+.post {text-align:left;font-size:16px;}
+.post-headline {font-size:32px;text-shadow:0 0 6px #AAA;}
+.post-date {margin:0 0 10px;padding:0 0 5px 20px;font-size:18px;}
+.signature {font-family:MerriweatherBold,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;font-style:italic;font-size:24px;text-shadow:0 0 1px #333,0 0 4px #999;}
+.signature a:link,
+.signature a:visited {color:#FFF !important;border:none;}
+.signature a:hover,
+.signature a:active {color:#CCC !important;border:none;}
+.sup {position:relative;top:-5px;font-size:75%;}
+.title {font-family:MerriweatherBlack,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;}
+.tool {
+    border-color:#D4D4D4 #D4D4D4 #BCBCBC;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    border-style:solid;
+    border-width:1px;
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Bering Glacier Monitoring - Michigan Tech Research Institute (MTRI)</title>
+    {% block css %}
+        <!-- Conditional commenting for non-IE browsers -->
+        <!--[if (!IE)]><!-->
+        <link href="/gass/media/css/bering.css" rel="stylesheet" type="text/css" />
+        <!--<![endif]-->
+
+        <!-- Conditional commenting for IE browsers -->
+        <!--[if IE]>
+        <link href="/gass/media/css/bering.ie.css" rel="stylesheet" type="text/css" />
+        <![endif]-->
+    {% endblock css %}
+</head>
+
+{% block scripts %}
+{% endblock scripts %}
+
+{% block tag-body %}
+<body>
+
+    {% block id-navigator %}
+    <div id="navigator">
+        <ul class="navigation">
+            <li class="lit"><a href="/gass/">Home</a></li>
+            <li><a href="/gass/about/">Background</a></li>
+            <li><a href="/gass/current/">Map & Status</a></li>
+            <li><a href="/gass/plots/">Real-Time Plots</a></li>
+            <li><a href="/gass/instrumentation/">Instrumentation</a></li>
+            <li><a href="/gass/team/">Project Team</a></li>
+        </ul>
+    </div>
+    {% endblock id-navigator %}
+
+    {% block id-canvas %}
+    <div class="container" id="canvas">
+
+        {% block id-header %}
+        <div id="header">
+            <div class="title">Bering Glacier Monitoring</div>
+        </div>
+        {% endblock id-header %}
+
+        {% block id-feature %}
+        <div id="feature">
+            <img id="location-map" src="/gass/media/img/location_map.gif" />
+            With an area of approximately 5,175 km<span class="sup">2</span> and a length of about 190 km, the <b>Bering Glacier</b>, located on the southeast coast of Alaska, is the largest and longest glacier in continental North America.
+            It is also the <b>largest temperate, surging glacier in the world</b>. You can learn more about surging glaciers <a href="#surge">here</a>.
+            More information on the Bering Glacier can be found at <a href="http://www.beringglacier.org/">BeringGlacier.org.</a></span>
+        </div>
+        {% endblock id-feature %}
+
+        {% block id-content %}
+        <div id="content">
+            {% block id-feed %}
+            <div id="feed">
+                {% autoescape off %}
+                <div class="post">
+                    <div class="post-headline title">The Typical News Headline</div>
+                    <div class="post-date date">May 11, 2012</div>
+                    <div class="post-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+                </div>
+                {% endautoescape %}
+            </div>
+            {% endblock id-feed %}
+        </div>
+        {% endblock id-content %}
+
+        {% block id-credits %}
+        <div id="credits">
+            <a href="http://www.mtri.org/" target="_blank"><img class="sponsor-logo" id="logo-mtri" src="/gass/media/img/logo_MTRI_gray.png" /></a>
+            <a href="http://www.blm.gov/ak/st/en.html" target="_blank"><img class="sponsor-logo" id="logo-blm" src="/gass/media/img/logo_BLM_gray.png" /></a>
+            <a href="http://www.usgs.gov/" target="_blank"><img class="sponsor-logo" id="logo-usgs" src="/gass/media/img/logo_USGS_gray.png" /></a>
+        </div>
+        {% endblock id-credits %}
+
+    </div>
+    {% endblock id-canvas %}
+
+    {% block id-attribution %}
+        <div class="container" id="attribution">
+            <div class="attribute">
+                <span class="signature"><a href="http://www.beringglacier.org/">www.BeringGlacier.org</a></span><br />
+            </div>
+            <div class="attribute">
+                <div class="menu">
+                    <div class="heading">Site Map</div>
+                    <a class="lit" href="/gass/">Home</a>
+                    <a href="/gass/about/">Background</a>
+                    <a href="/gass/current/">Map & Status</a>
+                    <a href="/gass/plots/">Real-Time Plots</a>
+                    <a href="/gass/instrumentation/">Instrumentation</a>
+                    <a href="/gass/team/">Project Team</a>
+                </div>
+            </div>
+            {% block id-disclaimer %}
+            <div id="disclaimer">
+                &copy; 2012 <a href="http://www.mtri.org/" target="_blank">Michigan Tech Research Institute</a><br />
+                This website and its content are not administered or endorsed by either the U.S. Bureau of Land Management or the U.S. Geological Survey.
+            </div>
+            {% endblock id-disclaimer %}
+        </div>
+    {% endblock id-attribution %}
+</body>
+{% endblock tag-body %}
+
+</html>

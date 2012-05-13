@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document><Folder><name>2010terminus</name>
+<Schema name="2010terminus" id="2010terminus">
+	<SimpleField name="Name" type="string"></SimpleField>
+	<SimpleField name="Description" type="string"></SimpleField>
+	<SimpleField name="Id" type="int"></SimpleField>
+</Schema>
+  <Placemark>
+	<Style><LineStyle><color>ff0099ff</color><width>5</width></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#2010terminus">
+		<SimpleData name="Id">0</SimpleData>
+	</SchemaData></ExtendedData>
+      <LineString><coordinates>-143.519568632142949,60.181769564691002 -143.513554586004403,60.182205845560752 -143.488902876709545,60.169961950216276 -143.48533970999506,60.169775639950629 -143.470843827097951,60.171247422384077 -143.464293285559052,60.170026323000364 -143.459116561345354,60.168461163080032 -143.454756329995348,60.167830709952021 -143.447993046285944,60.165404667674942 -143.446177558999096,60.166307147368926 -143.441250149995483,60.166573589952613 -143.437201152957783,60.166351218886859 -143.413640142935719,60.16010274800648 -143.402831987784026,60.168180272236661 -143.391264500218483,60.174428961104283 -143.38793170908346,60.173481959558011 -143.386168924353569,60.182565741131349 -143.381011526118186,60.186039598524239 -143.359057987241499,60.187435427733732 -143.354712699996156,60.189262729956006 -143.337050849996274,60.184872289956616</coordinates></LineString>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0099ff</color><width>5</width></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#2010terminus">
+		<SimpleData name="Id">0</SimpleData>
+	</SchemaData></ExtendedData>
+      <LineString><coordinates>-143.315341902056929,60.181232021982424 -143.307236995158377,60.181125129809715 -143.306534432528025,60.183127004787835 -143.292968561987578,60.182747889113223 -143.2955143453826,60.187694484375449 -143.288293893967221,60.196648455291985 -143.295886205352474,60.197098833665223 -143.298925576597185,60.199799831813408 -143.287976023540068,60.205795706271246</coordinates></LineString>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0099ff</color><width>5</width></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#2010terminus">
+		<SimpleData name="Id">0</SimpleData>
+	</SchemaData></ExtendedData>
+      <LineString><coordinates>-143.315341902056929,60.181232021982424 -143.337050849996274,60.184872289956616</coordinates></LineString>
+  </Placemark>
+</Folder></Document></kml>

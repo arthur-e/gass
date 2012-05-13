@@ -1,0 +1,44 @@
+# The following is an example of a configuration file that stores sensitive 
+#   information. It should be copied to /etc/gass/settings.ini and modified.
+
+[database]
+DATABASE_USER: djangouser
+DATABASE_PASSWORD: secret
+DATABASE_HOST: localhost
+DATABASE_PORT:
+DATABASE_NAME: gass
+
+[database-test]
+DATABASE_USER: testuser
+DATABASE_PASSWORD: secret
+DATABASE_HOST: localhost
+DATABASE_PORT:
+DATABASE_NAME: gass
+
+[logging]
+LOG_FILENAME: /var/log/gass/django.log
+
+[media]
+MEDIA_ROOT: /usr/local/dev/gass/media/
+
+[secrets]
+SECRET_KEY: random-string-of-ascii
+
+# All settings in debug section should be false in productive environment
+# INTERNAL_IPS should be empty in productive environment
+[debug]
+DEBUG: true
+TEMPLATE_DEBUG: true
+
+[email]
+SERVER_EMAIL: django@localhost
+EMAIL_HOST: localhost
+
+# The [error mail] and [404 mail] sections are special. Just add lines with
+#    full name: email_address@domain.xx
+# Each section must be present but may be empty.
+[error mail]
+John Smith: johnsmith@localhost
+
+[404 mail]
+John Wayne: johnwayne@localhost

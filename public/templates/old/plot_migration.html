@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+
+{% load custom_tags %}
+
+{% block scripts %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/static/highcharts/2.1.1/js/highcharts.js"></script>
+<script type="text/javascript" src="/static/highcharts/2.1.1/js/modules/exporting.js"></script>
+<script type="text/javascript">
+function initialize() {
+    var d = new Date(), defaults, ablationChart, migrationChart;
+    defaults = {
+        plotOptions: {
+            line: {
+                lineWidth: 3,
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            marker: {
+                                enabled: true,
+                                symbol: 'circle',
+                                radius: 3,
+                                lineWidth: 1
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        credits: {
+            floating: true, y: -100,
+            text: 'Powered by Highcharts'
+            },
+        xAxis: {
+            dateTimeLabelFormats: {
+	            second: '%H:%M:%S',
+	            minute: '%H:%M',
+	            hour: '%b-%d <br> %H:%M',
+	            day: '%m-%e',
+	            week: '%b %e',
+	            month: '%b \'%y',
+	            year: '%Y'
+                },
+            lineColor: "#C0C0C0"
+            },
+        tooltip: {
+            formatter: function() {
+                return '<b>'+ this.series.name +'</b><br>'+
+                Highcharts.dateFormat('%b %e', this.x) +': '+ this.y.toFixed(1) + ' ' + this.series.units;
+                }
+            },
+        legend: {
+            align: 'left', verticalAlign: 'top', floating: true, x: 65,
+            borderWidth: 0, itemStyle: {fontSize: '16px', fontWeight: 'bold'}
+            },
+        exporting: {
+            buttons: {
+                exportButton: {align: 'right', verticalAlign: 'bottom', y: -65},
+                printButton: {align: 'right', verticalAlign: 'bottom', y: -65},
+                }
+            }
+        };
+
+    migrationChart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'migrationChart',
+            defaultSeriesType: 'line',
+            loadMask: true,
+            marginBottom: 130,
+            height: 500,
+            },
+        plotOptions: defaults.plotOptions,
+        credits: defaults.credits,
+        title: {
+            text: 'Summer 2011: Average Daily Migration Over Last 10 Days', align: 'right',
+            style: {fontSize: '16px', fontWeight: 'bold'}
+            },
+        xAxis: {
+            // min: Date.UTC({{ b1.min_date.year }}, {{ b1.min_date.month }} - 1, {{ b1.min_date.day }}),
+            max: Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) + 1000*60*60*24,
+            type: 'datetime',
+            dateTimeLabelFormats: defaults.xAxis.dateTimeLabelFormats,
+            labels: {
+                style: {fontSize: '14px', fontWeight: 'bold'}, y: 20
+                }
+            },
+        yAxis: [
+            { // Left yAxis (for Migration)
+                min: {{ b1.min_migration }} - 10,
+                max: {{ b2.max_migration }},
+                labels: {
+                    style: {fontSize: '14px', fontWeight: 'bold'}
+                    },
+                title: {
+                    text: 'Avg Daily Migration (m)', margin: 20,
+                    style: {fontSize: '16px', fontWeight: 'bold'}
+                    },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                    }],
+                lineColor: "#C0C0C0"
+                },
+            { // Right yAxis (for Migration Rate),
+                min: {{ b1.min_migration_rate }} - 5,
+                labels: {
+                    style: {fontSize: '14px', fontWeight: 'bold'}
+                    },
+                title: {
+                    text: 'Avg Daily Migration Rate (m/day)', margin: 20,
+                    style: {fontSize: '16px', fontWeight: 'bold'}
+                    },
+                opposite: true,
+                lineColor: "#C0C0C0"
+                }
+            ],
+        tooltip: {
+            formatter: function() {
+                var n = this.series.name;
+                if (n.slice(4, n.length) == 'Migration') {
+                    return '<b>'+ this.series.name +'</b><br>'+
+                    Highcharts.dateFormat('%b %e', this.x) +': '+ this.y.toFixed(1) + ' m';
+                    }
+                else {
+                    return '<b>'+ this.series.name +'</b><br>'+
+                    Highcharts.dateFormat('%b %e', this.x) +': '+ this.y.toFixed(1) + ' m/day';
+                    }
+                }
+            },
+        legend: {
+            layout: 'vertical', align: 'left', verticalAlign: 'bottom',
+            backgroundColor: '#FFF', floating: true, x: 65, y: 15,
+            borderWidth: 0, itemStyle: {fontSize: '16px', fontWeight: 'bold'}
+            },
+        exporting: {
+            buttons: {
+                exportButton: {align: 'right', verticalAlign: 'bottom', y: -25},
+                printButton: {align: 'right', verticalAlign: 'bottom', y: -25},
+                }
+            },
+        series: [
+            {
+            name: 'B01 Migration (Daily)', zIndex: 9, color: '#4572A7', 
+            data: [
+                {% for obs in b1.migration %}
+                    [
+                    Date.UTC({{ obs.datetime.year }}, {{ obs.datetime.month }} - 1, {{ obs.datetime.day }}, {{ obs.datetime.hour }}, {{ obs.datetime.minute }}, {{ obs.datetime.second }}),
+                    {{ obs.migration_m }}
+                    ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            },
+            {
+            name: 'B02 Migration (Daily)', zIndex: 7, color: '#AA4643',
+            data: [
+                {% for obs in b2.migration %}
+                    [
+                    Date.UTC({{ obs.datetime.year }}, {{ obs.datetime.month }} - 1, {{ obs.datetime.day }}, {{ obs.datetime.hour }}, {{ obs.datetime.minute }}, {{ obs.datetime.second }}),
+                    {{ obs.migration_m }}
+                    ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            },
+            {
+            name: 'B01 Migration Rate (Daily)', type: 'column', yAxis: 1, zIndex: 1,
+            color: '#4572A7', 
+            data: [
+                {% for obs in b1.migration %}
+                    {% if not forloop.last %}
+                        [
+                        Date.UTC({{ obs.datetime.year }}, {{ obs.datetime.month }} - 1, {{ obs.datetime.day }}, {{ obs.datetime.hour }}, {{ obs.datetime.minute }}, {{ obs.datetime.second }}),
+                        {{ obs.migration_rate_m_per_day }}
+                        ]{% if not forloop.last %},{% endif %}
+                    {% endif %}
+                {% endfor %}
+                ]
+            },
+            {
+            name: 'B02 Migration Rate (Daily)', type: 'column', yAxis: 1, zIndex: 3,
+            color: '#AA4643', 
+            data: [
+                {% for obs in b2.migration %}
+                    {% if not forloop.last %}
+                        [
+                        Date.UTC({{ obs.datetime.year }}, {{ obs.datetime.month }} - 1, {{ obs.datetime.day }}, {{ obs.datetime.hour }}, {{ obs.datetime.minute }}, {{ obs.datetime.second }}),
+                        {{ obs.migration_rate_m_per_day }}
+                        ]{% if not forloop.last %},{% endif %}
+                    {% endif %}
+                {% endfor %}
+                ]
+            }
+            ]
+        });
+
+/*
+    migrationRateChart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'migrationRateChart',
+            defaultSeriesType: 'line',
+            loadMask: true,
+            marginBottom: 130,
+            height: 500,
+            },
+        plotOptions: defaults.plotOptions,
+        credits: defaults.credits,
+        title: {
+            text: 'Summer 2011: Net Migration Rate', align: 'right',
+            style: {fontSize: '16px', fontWeight: 'bold'}
+            },
+        xAxis: {
+            // min: Date.UTC({{ b1.min_date.year }}, {{ b1.min_date.month }} - 1, {{ b1.min_date.day }}),
+            max: Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()),
+            type: 'datetime',
+            dateTimeLabelFormats: defaults.xAxis.dateTimeLabelFormats,
+            labels: {
+                style: {fontSize: '14px', fontWeight: 'bold'}, y: 20
+                }
+            },
+        yAxis: [
+            { // Right yAxis (for Migration Rate)
+                labels: {
+                    style: {fontSize: '14px', fontWeight: 'bold'}
+                    },
+                title: {
+                    text: 'Migration Rate (m/day)', margin: 20,
+                    style: {fontSize: '16px', fontWeight: 'bold'}
+                    },
+                lineColor: "#C0C0C0"
+                }
+            ],
+        tooltip: {
+            formatter: function() {
+                var n = this.series.name;
+                if (n.slice(4, n.length) == 'Migration') {
+                    return '<b>'+ this.series.name +'</b><br>'+
+                    Highcharts.dateFormat('%b %e at %H:%M', this.x) +': '+ this.y.toFixed(1) + ' m';
+                    }
+                else {
+                    return '<b>'+ this.series.name +'</b><br>'+
+                    Highcharts.dateFormat('%b %e', this.x) +': '+ this.y.toFixed(1) + ' m/day';
+                    }
+                }
+            },
+        legend: {
+            layout: 'vertical', align: 'left', verticalAlign: 'bottom',
+            backgroundColor: '#FFF', floating: true, x: 65, y: 15,
+            borderWidth: 0, itemStyle: {fontSize: '16px', fontWeight: 'bold'}
+            },
+        exporting: {
+            buttons: {
+                exportButton: {align: 'right', verticalAlign: 'bottom', y: -25},
+                printButton: {align: 'right', verticalAlign: 'bottom', y: -25},
+                }
+            },
+        series: [
+            {
+            name: 'B01 Migration Rate', zIndex: 1,
+            color: '#4572A7', 
+            data: [
+                {% for observation in b1.migration_rate %}
+                    [
+                    {% for comp in observation %}
+                        {% if not forloop.last %}
+                            Date.UTC({{ comp.year }}, {{ comp.month }} - 1, {{ comp.day }}, {{ comp.hour }}, {{ comp.minute }}, {{ comp.second }}),
+                        {% endif %}
+                        {% if forloop.last %}{{ comp }}{% endif %}
+                    {% endfor %}
+                    ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            },
+            {
+            name: 'B02 Migration Rate', zIndex: 3,
+            color: '#AA4643', 
+            data: [
+                {% for observation in b2.migration_rate %}
+                    [
+                    {% for comp in observation %}
+                        {% if not forloop.last %}
+                            Date.UTC({{ comp.year }}, {{ comp.month }} - 1, {{ comp.day }}, {{ comp.hour }}, {{ comp.minute }}, {{ comp.second }}),
+                        {% endif %}
+                        {% if forloop.last %}{{ comp }}{% endif %}
+                    {% endfor %}
+                    ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            }
+            ]
+        });
+*/
+
+    }
+</script>
+{% endblock %}
+
+{% block body %}
+<body onload="initialize()">
+{% endblock %}
+
+{% block navigator %}
+<div id="navigator">
+    <ul class="navigation">
+        <li><a href="/gass/">Home</a></li>
+        <li><a href="/gass/about/">Background</a></li>
+        <li><a href="/gass/access/">Data</a></li>
+        <li><a href="/gass/current/">Map & Status</a></li>
+        <li class="lit"><a href="/gass/plots/">Real-Time Plots</a></li>
+        <li><a href="/gass/instrumentation/">Instrumentation</a></li>
+        <li><a href="/gass/team/">Project Team</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block topCanvas %}
+<div class="outerContainer" id="topCanvas">
+    <div class="barHeader soft"></div>
+    <div class="barHeaderText"><a href="/gass/">Bering Glacier Monitoring</a></div>
+    <div id="canvas">
+        <span class="pageTitle">Recent Migration Time Series</span>
+        <div class="chart" id="migrationChart"></div><br />
+        <!--
+        <div class="barHeader"><a name="migration_rate" href="#migration_rate">Net Migration Rate</a></div><br />
+        <div class="chart" id="migrationRateChart"></div><br />
+        -->
+        <div class="note"><span class="beringWebsite"><a href="http://www.beringglacier.org/">www.BeringGlacier.org</a></span>This website and its content are not administered or endorsed by either the U.S. Bureau of Land Management or the U.S. Geological Survey.</div>
+    </div>
+    <div id="logos">
+        <a href="http://www.mtri.org/" target="_blank"><img id="mtriLogo" src="/gass/media/img/logo_MTRI_gray.png" /></a>
+        <a href="http://www.blm.gov/ak/st/en.html" target="_blank"><img id="blmLogo" src="/gass/media/img/logo_BLM_gray.png" /></a>
+        <a href="http://www.usgs.gov/" target="_blank"><img id="usgsLogo" src="/gass/media/img/logo_USGS_gray.png" /></a>
+    </div>
+</div>
+{% endblock %}

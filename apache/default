@@ -1,0 +1,14 @@
+    # BeringGlacier.org/gass - GASS Real-Time Data Access ######################
+    WSGIScriptAlias /gass /usr/local/dev/gass/apache/django.wsgi
+
+    Alias /gass/media /usr/local/dev/gass/media/
+    <Directory "/usr/local/dev/gass/media/">
+        Options Indexes MultiViews
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+    <Directory "/usr/local/dev/gass/apache/">
+        Order deny,allow
+        Allow from all
+    </Directory>

@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% load custom_tags %}
+
+{% block scripts %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/static/highcharts/2.1.1/js/highcharts.js"></script>
+<script type="text/javascript" src="/static/highcharts/2.1.1/js/modules/exporting.js"></script>
+<script type="text/javascript">
+function initialize() {
+    var d = new Date(), defaults, ablationChart, migrationChart;
+    defaults = {
+        plotOptions: {
+            line: {
+                lineWidth: 3,
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            marker: {
+                                enabled: true,
+                                symbol: 'circle',
+                                radius: 3,
+                                lineWidth: 1
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        credits: {
+            floating: true, y: -100,
+            text: 'Powered by Highcharts'
+            },
+        xAxis: {
+            dateTimeLabelFormats: {
+	            second: '%H:%M:%S',
+	            minute: '%H:%M',
+	            hour: '%b-%d <br> %H:%M',
+	            day: '%m-%e',
+	            week: '%b %e',
+	            month: '%b \'%y',
+	            year: '%Y'
+                }
+            },
+        tooltip: {
+            formatter: function() {
+                return '<b>'+ this.series.name +'</b><br>'+
+                Highcharts.dateFormat('%b %e', this.x) +': '+ this.y.toFixed(1) + ' ' + this.series.units;
+                }
+            },
+        legend: {
+            align: 'left', verticalAlign: 'top', floating: true, x: 65,
+            borderWidth: 0, itemStyle: {fontSize: '16px', fontWeight: 'bold'}
+            },
+        exporting: {
+            buttons: {
+                exportButton: {align: 'right', verticalAlign: 'bottom', y: -65},
+                printButton: {align: 'right', verticalAlign: 'bottom', y: -65},
+                }
+            }
+        };
+
+    mddCumulativeChart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'mddCumulativeChart',
+            defaultSeriesType: 'line',
+            loadMask: true,
+            marginBottom: 60,
+            marginTop: 50,
+            },
+        plotOptions: {
+            line: {
+                lineWidth: 5,
+                marker: {
+                    enabled: true,
+                    lineWidth: 5,
+                    lineColor: null,
+                    fillColor: '#FFF',
+                    radius: 5,
+                    symbol: 'circle',
+                    states: {
+                        hover: {
+                            enabled: false
+                            }
+                        }
+                    }
+                }
+            },
+        credits: defaults.credits,
+        title: null, /*{
+            text: 'Summer 2011: Ablation vs. Melt Degree Days', align: 'right',
+            style: {fontSize: '16px', fontWeight: 'bold'}
+            }, */
+        xAxis: [
+            { // Top xAxis (for Cumulative MDDs)
+                min: -1,
+                max: {{ b2.max_cumulative_mdds }} + 5,
+                gridLineWidth: 1,
+                type: 'linear', opposite: true,
+                tickPosition: 'inside', startOnTick: true, endOnTick: true,
+                title: {
+                    text: 'Cumulative Melt Degree Days (MDDs)',
+                    style: {fontSize: '16px', fontWeight: 'bold'}
+                    },
+                labels: {
+                    style: {fontSize: '14px', fontWeight: 'bold'}, y: -10,
+                    formatter: function() {
+                        if (this.value >= 0) {return this.value;}
+                        }
+                    },
+                lineColor: "#C0C0C0"
+                }
+            ],
+        yAxis: {
+            min: -1,
+            labels: {
+                style: {fontSize: '14px', fontWeight: 'bold'},
+                formatter: function() {
+                    if (this.value >= 0) {return this.value;}
+                    }
+                },
+            title: {
+                text: 'Avg Daily Ablation (cm)', margin: 20,
+                style: {fontSize: '16px', fontWeight: 'bold'}
+                },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+                }],
+            lineColor: "#C0C0C0"
+            },
+        tooltip: {
+            formatter: function() {
+                var n = this.series.name;
+                return '<b>'+this.series.name+'</b> - Day '+this.point.name +'<br>'+
+                this.x.toFixed(1)+' MDDs | '+this.y.toFixed(1)+' cm Ablation';
+                }
+            },
+        legend: {
+            layout: 'vertical', align: 'left', verticalAlign: 'bottom',
+            backgroundColor: '#FFF', floating: true, x: 65, y: 10,
+            borderWidth: 0, itemStyle: {fontSize: '16px', fontWeight: 'bold'},
+            symbolWidth: 40
+            },
+        exporting: {
+            buttons: {
+                exportButton: {align: 'right', verticalAlign: 'bottom', y: -25},
+                printButton: {align: 'right', verticalAlign: 'bottom', y: -25},
+                }
+            },
+        series: [
+            {
+            name: 'B01 Cumulative MDDs', zIndex: 9, color: '#4572A7', 
+            data: [
+                {% for mdd in b1.degree_days %}
+                    {
+                        name: {{ mdd.date }},
+                        x: {{ mdd.accum_mdds }},
+                        y: {{ mdd.ablation }}
+                    }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            },
+            {
+            name: 'B02 Cumulative MDDs', zIndex: 7, color: '#AA4643',
+            data: [
+                {% for mdd in b2.degree_days %}
+                    {
+                        name: {{ mdd.date }},
+                        x: {{ mdd.accum_mdds }},
+                        y: {{ mdd.ablation }}
+                    }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            }
+            ]
+        });
+
+/*
+    mddchart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'mddChart',
+            defaultSeriesType: 'scatter',
+            loadMask: true,
+            marginBottom: 60,
+            marginTop: 50
+            },
+        plotOptions: {
+            scatter: {
+                marker: {
+                    enabled: true,
+                    lineWidth: 5,
+                    lineColor: null,
+                    fillColor: '#FFF',
+                    radius: 5,
+                    symbol: 'circle',
+                    states: {
+                        hover: {
+                            enabled: false
+                            }
+                        }
+                    }
+                }
+            },
+        credits: defaults.credits,
+        title: null,
+        xAxis: [
+            { // Bottom xAxis (for MDDs)
+                min: {{ b2.min_mdds }} - 2,
+                max: {{ b2.max_mdds }} + 1,
+                gridLineWidth: 1, opposite: true,
+                type: 'linear', tickPosition: 'outside',
+                title: {
+                    text: 'Melt Degree Days (MDDs)',
+                    style: {fontSize: '16px', fontWeight: 'bold'}, y: -10
+                    },
+                labels: {
+                    style: {fontSize: '14px', fontWeight: 'bold'}, y: -15
+                    },
+                lineColor: "#C0C0C0"
+                }
+            ],
+        yAxis: {
+            labels: {
+                style: {fontSize: '14px', fontWeight: 'bold'},
+                formatter: function() {
+                    if (this.value >= 0) {return this.value;}
+                    }
+                },
+            title: {
+                text: 'Ablation Rate (cm/day)', margin: 20,
+                style: {fontSize: '16px', fontWeight: 'bold'}
+                },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+                }],
+            lineColor: "#C0C0C0"
+            },
+        tooltip: {
+            formatter: function() {
+                var n = this.series.name;
+                return '<b>'+this.series.name+'</b> - Day '+this.point.name +'<br>'+
+                this.x.toFixed(1)+' MDDs | '+this.y.toFixed(1)+' cm/day';
+                }
+            },
+        legend: {
+            layout: 'vertical', align: 'left', verticalAlign: 'bottom',
+            backgroundColor: '#FFF', floating: true, x: 65, y: 10,
+            borderWidth: 0, itemStyle: {fontSize: '16px', fontWeight: 'bold'},
+            symbolWidth: 40
+            },
+        exporting: {
+            buttons: {
+                exportButton: {align: 'right', verticalAlign: 'bottom', y: -25},
+                printButton: {align: 'right', verticalAlign: 'bottom', y: -25},
+                }
+            },
+        series: [
+            {
+            name: 'B01 MDDs', zIndex: 5, color: '#4572A7',
+            data: [
+                {% for mdd in b1.degree_days %}
+                    {
+                        name: {{ mdd.date }},
+                        x: {{ mdd.mdds }},
+                        y: {{ mdd.ablation_rate }}
+                    }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            },
+            {
+            name: 'B02 MDDs', zIndex: 3, color: '#AA4643',
+            data: [
+                {% for mdd in b2.degree_days %}
+                    {
+                        name: {{ mdd.date }},
+                        x: {{ mdd.mdds }},
+                        y: {{ mdd.ablation_rate }}
+                    }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            }
+            ]
+        });
+*/
+
+    }
+</script>
+{% endblock %}
+
+{% block body %}
+<body onload="initialize()">
+{% endblock %}
+
+{% block navigator %}
+<div id="navigator">
+    <ul class="navigation">
+        <li><a href="/gass/">Home</a></li>
+        <li><a href="/gass/about/">Background</a></li>
+        <li><a href="/gass/access/">Data</a></li>
+        <li><a href="/gass/current/">Map & Status</a></li>
+        <li class="lit"><a href="/gass/plots/">Real-Time Plots</a></li>
+        <li><a href="/gass/instrumentation/">Instrumentation</a></li>
+        <li><a href="/gass/team/">Project Team</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block topCanvas %}
+<div class="outerContainer" id="topCanvas">
+    <div class="barHeader soft"></div>
+    <div class="barHeaderText"><a href="/gass/">Bering Glacier Monitoring</a></div>
+    <div id="canvas">
+        <span class="pageTitle">Melt Degree Days</span>
+        <span class="paragraph">
+            <br />
+            Melt Degree Days (MDDs) are a measure of sensible heat flux on the glacier.
+            They are calculated the same way as Cooling Degree Days <a href="#vesma">[1]</a>, which are often used in heating and energy use calculations.
+            MDDs can be accumulated over the melt season by adding up the previous days' MDDs.
+            Because cumulative MDDs have a time-series component and the Bering Glacier's ablation rate is fairly steady, cumulative MDDs and ablation correlate very well.
+        </span>
+        <span class="formula">
+            Melt Degree Days <span class="calc">D<sub>M</sub></span> for a day with maximum <span class="calc">T<sub>max</sub></span> and minimum <span class="calc">T<sub>min</sub></span> temperatures; base temperature <span class="calc">T<sub>base</sub></span> is melting point (0°C).<br /><br />
+            <span class="calc">When T<sub>max</sub> &lt; T<sub>base</sub>, D<sub>M</sub> = 0</span><br />
+            <span class="calc">When (T<sub>max</sub> + T<sub>min</sub>)/2 &lt; T<sub>base</sub>, D<sub>M</sub> = (T<sub>max</sub> - T<sub>base</sub>)/4<br />
+            <span class="calc">When T<sub>min</sub> &lt;= T<sub>base</sub>, D<sub>M</sub> = (T<sub>max</sub> - T<sub>base</sub>)/2 - (T<sub>base</sub> - T<sub>min</sub>)/4<br />
+            <span class="calc">When T<sub>min</sub> &gt; T<sub>base</sub>, D<sub>M</sub> = (T<sub>max</sub> + T<sub>min</sub>)/2 - T<sub>base</sub><br />
+        </span><br />
+        <span class="citation"><a name="vesma" href="http://www.vesma.com/ddd/">[1] From Vilnis Vesma, Degree Days Direct</a></span>
+        <div class="chart" id="mddCumulativeChart"></div><br />
+        <div class="chart" id="mddChart"></div><br />
+        <div class="note"><span class="beringWebsite"><a href="http://www.beringglacier.org/">www.BeringGlacier.org</a></span>This website and its content are not administered or endorsed by either the U.S. Bureau of Land Management or the U.S. Geological Survey.</div>
+    </div>
+    <div id="logos">
+        <a href="http://www.mtri.org/" target="_blank"><img id="mtriLogo" src="/gass/media/img/logo_MTRI_gray.png" /></a>
+        <a href="http://www.blm.gov/ak/st/en.html" target="_blank"><img id="blmLogo" src="/gass/media/img/logo_BLM_gray.png" /></a>
+        <a href="http://www.usgs.gov/" target="_blank"><img id="usgsLogo" src="/gass/media/img/logo_USGS_gray.png" /></a>
+    </div>
+</div>
+{% endblock %}
