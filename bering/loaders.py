@@ -9,6 +9,24 @@ sys.path.append('/usr/local/project')
 import gass
 from gass.bering.models import B1Ablation, B2Ablation
 
+# Data dictionary describing field name, position in CSV, and data type
+fields = {
+    'satellites':       [1,     int],
+    'hdop':             [2,     float],
+    'time':             [3,     Time], # See Time class above
+    'date':             [4,     Date], # See Date class above
+    'datetime':         [None,  datetime.datetime], # See datetime module
+    'lat':              [5,     Lat], # Convert to decimal degrees
+    'lng':              [6,     Lng], # Convert to decimal degrees
+    'acoustic_range_cm':[7,     Decimal], # See decimal module
+    'optical_range_cm': [8,     Decimal],
+    'top_light':        [9,     int],
+    'bottom_light':     [10,    int],
+    'wind_m_s':         [11,    Decimal],
+    'temp_C':           [12,    Decimal],
+    'voltage':          [13,    float]
+    }
+
 class UTC(datetime.tzinfo):
     '''UTC'''
     def utcoffset(self, dt):
@@ -18,10 +36,12 @@ class UTC(datetime.tzinfo):
     def dst(self, dt):
         return datetime.timedelta(0)
 
+
 class Coord:
     '''An abstract coordinate class'''
     def __init__(self, value=0.0):
         self.set_encoded_value(value)
+
 
 class Date:
     def __init__(self, value):
@@ -50,6 +70,7 @@ class Time:
         self.second = int(val[4:6])
         self.value = datetime.time(hour=self.hour, minute=self.minute, second=self.second, tzinfo=UTC())
 
+
 class Lat(Coord):
     '''A latitude coordinate'''
     def set_encoded_value(self, val):
@@ -58,6 +79,7 @@ class Lat(Coord):
         degrees of North latitude and MM.SS is the decimal minutes
         '''
         self.value = int(val[0:2]) + Decimal(val[2:])/60
+
 
 class Lng(Coord):
     '''A longitude coordinate'''
@@ -68,23 +90,56 @@ class Lng(Coord):
         '''
         self.value = int(val[0:3]) + Decimal(val[3:])/60
 
-# Data dictionary describing field name, position in CSV, and data type
-fields = {
-    'satellites':       [1,     int],
-    'hdop':             [2,     float],
-    'time':             [3,     Time], # See Time class above
-    'date':             [4,     Date], # See Date class above
-    'datetime':         [None,  datetime.datetime], # See datetime module
-    'lat':              [5,     Lat], # Convert to decimal degrees
-    'lng':              [6,     Lng], # Convert to decimal degrees
-    'acoustic_range_cm':[7,     Decimal], # See decimal module
-    'optical_range_cm': [8,     Decimal],
-    'top_light':        [9,     int],
-    'bottom_light':     [10,    int],
-    'wind_m_s':         [11,    Decimal],
-    'temp_C':           [12,    Decimal],
-    'voltage':          [13,    float]
-    }
+
+def load_from_csv(path, station_id=None, tzone=EDT()):
+    '''
+    Loads GASS data in bulk from a CSV file.
+    <path>          {String}            The path to the CSV file
+    <station_id>    {String}            The station ID e.g. "b01"
+    <tzone>         {datetime.tzinfo}   A time zone representation (defaults to
+                                        EDT)
+    '''
+    if station_id is None and model is None:
+        raise TypeError("load_from_csv() requires that at least one of the arguments, <station_id> or <model>, be provided")
+
+    if station_id is not None and model is None:
+        model = MODELS[station_id]
+
+    else: # We can look up the buoy ID for you if a model was specified
+        station_id = lookup_uid(model)
+
+    reader = csv.reader(open(path, 'rb'), delimiter=',', quotechar='"')
+    for line in reader:
+        l = reader.line_num # Lines start numbering at 1, not 0
+        if line == []:
+            line = reader.next() # Check for empty lines
+
+        if l == 1:
+            header = line # Get field names
+            line = reader.next() # Move on to the first line of data
+
+        data_dict = {}
+        for field in header:
+            value = line[header.index(field)] # The value for that field
+            # Catch empty values that should be null
+            if len(value) == 0 or value == '_':
+                if model._meta.get_field(field.lower()).null:
+                    data_dict[field.lower()] = None
+
+            else:
+                data_dict[field.lower()] = value
+
+        data_dict['asset'] = Asset.objects.get(uid__exact=station_id)
+
+        data_obj = model(**data_dict) # Create a model instance
+        data_obj.clean(tzinfo=tzone) # Perform initial validation
+        try:
+            model.objects.get(timestamp__exact=data_obj.timestamp) # Check to see if the record already exists
+
+        except ObjectDoesNotExist:
+            data_obj.save() # Save the record to the database only if it doesn't already exist
+            buoy_logger.debug("Saved record of %s with timestamp %s [Saved]" % (model._meta.object_name, data_dict['timestamp']))
+
 
 def append_to_log(entry):
     '''Adds an entry to the log'''
@@ -93,6 +148,7 @@ def append_to_log(entry):
         with open(log_dir + log_file, mode='a') as log:
             now = datetime.datetime.now()
             print(now.strftime('%Y-%m-%d %H:%M') + ' -- ' + entry, file=log)
+
 
 def quality_check(data_dict, last_data_dict, filename, line):
     '''
@@ -137,6 +193,7 @@ def quality_check(data_dict, last_data_dict, filename, line):
 
     else:
         return False
+
 
 def import_from_csv(filename, model):
     '''Imports GASS data from a given CSV file for a given data model'''
@@ -204,6 +261,7 @@ def import_from_csv(filename, model):
 
         last_data_dict = data_dict # Save this data dictionary for next time
         l += 1
+
 
 if __name__ == "__main__":
     # In case the script is run from a terminal...

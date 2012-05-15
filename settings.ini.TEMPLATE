@@ -16,7 +16,8 @@ DATABASE_PORT:
 DATABASE_NAME: gass
 
 [logging]
-LOG_FILENAME: /var/log/gass/django.log
+ERROR_LOG_FILENAME: /var/log/gass/django.log
+LOADING_LOG_FILENAME: /var/log/gass/loading.log
 
 [media]
 MEDIA_ROOT: /usr/local/dev/gass/media/

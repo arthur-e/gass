@@ -1,7 +1,38 @@
 from django.db import models
 
+class Albation(models.Model):
+    '''
+    Ablation measurement from the 2012 campaign.
+    '''
+    STATIONS = (
+        ('t01', 'T01')
+        ('b01', 'B01')
+        ('b02', 'B02')
+        ('b03', 'B03')
+        ('b04', 'B04')
+        ('b06', 'B06')
+    )
+    site = models.CharField(max_length=255, choices=STATIONS)
+    sats = models.IntegerField(verbose_name='satellites', help_text='Number of satellites')
+    hdop = models.FloatField(help_text='Horizontal dilution of precision (HDOP)', null=True)
+    time = models.TimeField()
+    date = models.DateField()
+    datetime = models.DateTimeField(help_text='Date and time of measurement from GPS')
+    lat = models.DecimalField(help_text='Latitude (Deg, Dec. Min. N)', max_digits=8, decimal_places=5)
+    lng = models.DecimalField(help_text='Longitude (Deg, Dec. Min. W)', max_digits=9, decimal_places=5)
+    range_cm = models.DecimalField(verbose_name='acoustic range (cm)', 'Acoustic Range (cm)', max_digits=5, decimal_places=2)
+    top = models.IntegerField(verbose_name='irradiance')
+    bottom = models.IntegerField(verbose_name='reflectance')
+    wind_spd = models.DecimalField(verbose_name='wind speed (m/s)', max_digits=5, decimal_places=2)
+    temp_C = models.DecimalField(verbose_name='temperature (C)', max_digits=4, decimal_places=1, null=True)
+    voltage = models.FloatField(verbose_name='battery voltage (V)')
+
+    def __unicode__(self):
+        return str(self.date) + ', ' + str(self.time)
+
+
 class B1Ablation(models.Model):
-    '''Ablation measurement at GASS B1; identical to B2Ablation model.'''
+    '''2011 ablation measurement at GASS B1; identical to B2Ablation model.'''
     satellites = models.IntegerField('Number of Satellites')
     hdop = models.FloatField('Dilution of Precision', null=True)
     time = models.TimeField('Time')
@@ -34,7 +65,7 @@ class B1Ablation(models.Model):
         return str(self.date) + ', ' + str(self.time)
 
 class B2Ablation(models.Model):
-    '''Ablation measurement at GASS B2; identical to B1Ablation model.'''
+    '''2011 ablation measurement at GASS B2; identical to B1Ablation model.'''
     satellites = models.IntegerField('Number of Satellites')
     hdop = models.FloatField('Dilution of Precision', null=True)
     time = models.TimeField('Time')
@@ -52,42 +83,3 @@ class B2Ablation(models.Model):
 
     def __unicode__(self):
         return str(self.date) + ', ' + str(self.time)
-
-class AblationMeasurement(models.Model):
-    '''An ablation measurement from before or during 2010'''
-    id = models.IntegerField()
-    # This is not the primary key, as it isn't as useful as datetime;
-    #   it is, however, necessary for iterating through records
-    site = models.TextField('Site Name')
-    name = models.CharField('Original Filename', max_length=50)
-    date = models.DateField('Date')
-    time = models.TimeField('Time')
-    # datetime = models.DateTimeField('Date and Time', unique=True)
-    # We tried making datetime unique before but that led to
-    #   database errors that could not be resolved when there
-    #   was an attempt to insert a duplicate record
-    datetime = models.DateTimeField('Date and Time', primary_key=True)
-    # By using datetime as the primary key, we ensure that:
-    #   a) Duplicate records in the raw data are entered as one
-    #       record with the most recent meteorological and
-    #       ablation data
-    #   b) When updating the database, we can pull records from
-    #       a consolidated file of all existing records without
-    #       fear of re-inserting records already in the database
-    jtime = models.FloatField('Julian Time')
-    ntrans = models.IntegerField()
-    temp_C = models.IntegerField('Temperature (C)')
-    wind_m_s = models.FloatField('Wind Speed (m/s)')
-    range_cm = models.IntegerField('Range (cm)')
-    top_uW_cm2 = models.FloatField('Irradiance (uW/[cm-cm])')
-    bottom_uW_cm2 = models.FloatField('Reflectance (uW/[cm-cm])')
-    voltage = models.FloatField('Battery Voltage (V)')
-    latitude = models.FloatField('Latitude (decimal degrees)')
-    longitude = models.FloatField('Longitude (decimal degrees)')
-    lat_deg = models.IntegerField('Latitude (degrees)')
-    lat_min = models.FloatField('Latitude (minutes)')
-    long_deg = models.IntegerField('Longitude (degrees)')
-    long_min = models.FloatField('Longitude (minutes)')
-
-    def __unicode__(self):
-        return self.site + ', ' + str(self.date) + ', ' + str(self.time)
