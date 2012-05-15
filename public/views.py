@@ -32,3 +32,10 @@ def display_instruments(request):
     localhost/gass/hardware/
     '''
     return render_to_response('instruments.html', {})
+
+
+def display_team(request):
+    '''
+    localhost/gass/team/
+    '''
+    return render_to_response('team.html', {})

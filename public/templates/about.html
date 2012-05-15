@@ -6,21 +6,22 @@
         <li><a href="{% url public_index %}">Home</a></li>
         <li class="lit"><a href="{% url public_about %}">Background</a></li>
         <li><a href="{% url public_access %}">Data</a></li>
+<!--
         <li><a href="/gass/current/">Map & Status</a></li>
         <li><a href="/gass/plots/">Real-Time Plots</a></li>
+-->
         <li><a href="{% url public_instruments %}">Instrumentation</a></li>
-        <li><a href="/gass/team/">Project Team</a></li>
+        <li><a href="{% url public_team %}">Project Team</a></li>
     </ul>
 </div>
 {% endblock id-navigator %}
 
 {% block id-feature %}
 <div id="feature">
-    <a href="http://rock.geosociety.org/Bookstore/default.asp?oID=0&catID=9&pID=SPE462" target="_blank"><img id="monograph" src="/gass/media/img/monograph.jpg" /></a>
-    The <b>Bering Glacier Monograph</b> is <a href="http://rock.geosociety.org/Bookstore/default.asp?oID=0&catID=9&pID=SPE462" target="_blank">now available</a> from the Geological Society of America!
-    The monograph presents the results of a comprehensive and diverse series of field studies and science investigations at Bering Glacier.
-    The results reported are from a wide range of scientific disciplines, including glaciology, geology, paleogeology, hydrology, limnology, oceanography, tectonics, geomorphology, geophysics, meteorology, remote sensing, climate change, anthropology, and ecological studies pertaining to vegetation, fish, and marine mammals.
-    <a href="http://rock.geosociety.org/Bookstore/default.asp?oID=0&catID=9&pID=SPE462" target="_blank">Purchase it from the GSA today!</a>
+    <img id="location-map" src="/gass/media/img/location_map.gif" />
+    With an area of approximately 5,175 km<span class="sup">2</span> and a length of about 190 km, the <b>Bering Glacier</b>, located on the southeast coast of Alaska, is the largest and longest glacier in continental North America.
+    It is also the <b>largest temperate, surging glacier in the world</b>. You can learn more about surging glaciers <a href="#surge">here</a>.
+    More information on the Bering Glacier can be found at <a href="http://www.beringglacier.org/">BeringGlacier.org.</a></span>
 </div>
 {% endblock id-feature %}
 

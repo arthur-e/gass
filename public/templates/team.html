@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block id-navigator %}
+<div id="navigator">
+    <ul class="navigation">
+        <li><a href="{% url public_index %}">Home</a></li>
+        <li><a href="{% url public_about %}">Background</a></li>
+        <li><a href="{% url public_access %}">Data</a></li>
+<!--
+        <li><a href="/gass/current/">Map & Status</a></li>
+        <li><a href="/gass/plots/">Real-Time Plots</a></li>
+-->
+        <li><a href="{% url public_instruments %}">Instrumentation</a></li>
+        <li class="lit"><a href="{% url public_team %}">Project Team</a></li>
+    </ul>
+</div>
+{% endblock id-navigator %}
+
+{% block id-feed %}
+<div id="feed">
+    <div class="page-title">Project Team Members</div>
+    <div class="paragraph">
+        <br />
+        The <b>Michigan Tech Research Institute (MTRI)</b> along with <b>Michigan Technological University (MTU)</b> brings an interdisciplinary group of scientists
+        researching the water quality and hydrology of Vitus Lake through remote sensing, the ablation and mass transfer as freshwater of the Bering Glacier,
+        seismic and acoustic events near the terminus, and the biology of the area's emerging ecosystem:
+        <ul>
+            <li><b>Dr. Robert Shuchman</b> -- Co-Director, MTRI</li>
+            <li><b>Arthur Endsley</b> -- Assistant Research Scientist, MTRI</li>
+            <li><b>Christopher Roussi</b> -- Senior Research Scientist/Engineer, MTRI</li>
+            <li><b>Benjamin Hart</b> -- Assistant Research Engineer, MTRI</li>
+            <li><b>Liza Jenkins</b> -- Research Scientist, MTRI</li>
+            <li><b>Dr. Nancy Auer</b> -- Associate Professor, Biological Sciences, MTU</li>
+            <li><b>Dr. Gregory Waite</b> -- Assistant Professor, Geological Sciences, MTU</li>
+            <li><b>Joshua Richardson</b> -- Graduate Student, Geological Sciences, MTU</li>
+            <li><b>Dr. Wayne Pennington</b> -- Chair, Geological Sciences, MTU</li>
+        </ul>
+        The <b>Bureau of Land Management (BLM)</b> provides resource management expertise for the region and invaluable logistical support for research scientists, enabling safe and productive operations:
+        <ul>
+            <li><b>Gary Reimer</b> -- Anchorage District Manager</li>
+            <li><b>Dave Doucet</b> -- Bering Camp Manager</li>
+        </ul>
+        The <b>U.S. Geological Survey (USGS)</b> has a long history of expertise in glaciology and remote sensing and has significantly contributed to the understanding of geophysical processes in the Bering Glacier region:
+        <ul>
+            <li><b>Dr. Edward Josberger</b> -- Glacier-Climate Scientist, Retired</li>
+            <li><b>Dr. Bruce Molnia</b> -- Research Geologist</li>
+        </ul>
+    </div>
+</div>
+{% endblock id-feed %}
