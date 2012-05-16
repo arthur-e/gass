@@ -1,13 +1,34 @@
 # Use print() function instead of print statement
 from __future__ import print_function
+import datetime, os, sys, csv logging
 from decimal import *
-from django.core.management import setup_environ
-import datetime, os, sys
 
+from django.core.management import setup_environ
 os.environ["DJANGO_SETTINGS_MODULE"] = "gass.settings"
-sys.path.append('/usr/local/project')
-import gass
-from gass.bering.models import B1Ablation, B2Ablation
+sys.path.append('/usr/local/dev/')
+
+from gass.bering.models import Ablation
+from gass.bering.utils import *
+
+logger = logging.getLogger('loading')
+
+# Maps field names in CSV to proper field names
+aliases = {
+    'valid': 'valid',
+    'sats': 'sats',
+    'hdop': 'hdop',
+    'time': 'time',
+    'date': 'date',
+    'lat': 'lat',
+    'long': 'lng', # Name long is generally a reserved word
+    'alt': 'elev',
+    'range': 'range_cm', # Name range is a reserved word in Python
+    'topl': 'above',
+    'bottom': 'below',
+    'wind': 'wind_spd',
+    'temp': 'temp_C', # Name temp is generally a reserved word
+    'batt': 'volts'
+}
 
 # Data dictionary describing field name, position in CSV, and data type
 fields = {
@@ -27,71 +48,7 @@ fields = {
     'voltage':          [13,    float]
     }
 
-class UTC(datetime.tzinfo):
-    '''UTC'''
-    def utcoffset(self, dt):
-        return datetime.timedelta(0)
-    def tzname(self, dt):
-        return 'UTC'
-    def dst(self, dt):
-        return datetime.timedelta(0)
-
-
-class Coord:
-    '''An abstract coordinate class'''
-    def __init__(self, value=0.0):
-        self.set_encoded_value(value)
-
-
-class Date:
-    def __init__(self, value):
-        self.set_encoded_value(value)
-    def set_encoded_value(self, val):
-        '''Assumes val is a string of the form DDMMYY'''
-        l = len(val)
-        if val.find('.') is not -1:
-            val = val[:val.find('.')] # Find and exclude fractional part
-        val = val.rjust(6, '0') # Embed time stamp in string of zeroes, length 6
-        self.day = int(val[0:2])
-        self.month = int(val[2:4])
-        self.year = int('20' + val[4:6])
-        self.value = datetime.date(day=self.day, month=self.month, year=self.year)
-
-class Time:
-    def __init__(self, value):
-        self.set_encoded_value(value)
-    def set_encoded_value(self, val):
-        '''Assumes val is a string of the form HHMMSS.SSS'''
-        if val.find('.') is not -1:
-            val = val[:val.find('.')] # Find and exclude fractional part
-        val = val.rjust(6, '0') # Embed time stamp in string of zeroes, length 6
-        self.hour = int(val[0:2])
-        self.minute = int(val[2:4])
-        self.second = int(val[4:6])
-        self.value = datetime.time(hour=self.hour, minute=self.minute, second=self.second, tzinfo=UTC())
-
-
-class Lat(Coord):
-    '''A latitude coordinate'''
-    def set_encoded_value(self, val):
-        '''
-        Assumption is that val is in DDMM.SS form where DD is the number of
-        degrees of North latitude and MM.SS is the decimal minutes
-        '''
-        self.value = int(val[0:2]) + Decimal(val[2:])/60
-
-
-class Lng(Coord):
-    '''A longitude coordinate'''
-    def set_encoded_value(self, val):
-        '''
-        Assumption is that val is in DDDMM.SS form where DD is the number of
-        degrees of West longitude and MM.SS is the decimal minutes
-        '''
-        self.value = int(val[0:3]) + Decimal(val[3:])/60
-
-
-def load_from_csv(path, station_id=None, tzone=EDT()):
+def load_from_csv(path, station_id, tzone=UTC()):
     '''
     Loads GASS data in bulk from a CSV file.
     <path>          {String}            The path to the CSV file
@@ -99,15 +56,7 @@ def load_from_csv(path, station_id=None, tzone=EDT()):
     <tzone>         {datetime.tzinfo}   A time zone representation (defaults to
                                         EDT)
     '''
-    if station_id is None and model is None:
-        raise TypeError("load_from_csv() requires that at least one of the arguments, <station_id> or <model>, be provided")
-
-    if station_id is not None and model is None:
-        model = MODELS[station_id]
-
-    else: # We can look up the buoy ID for you if a model was specified
-        station_id = lookup_uid(model)
-
+    model = Ablation
     reader = csv.reader(open(path, 'rb'), delimiter=',', quotechar='"')
     for line in reader:
         l = reader.line_num # Lines start numbering at 1, not 0
@@ -123,22 +72,25 @@ def load_from_csv(path, station_id=None, tzone=EDT()):
             value = line[header.index(field)] # The value for that field
             # Catch empty values that should be null
             if len(value) == 0 or value == '_':
-                if model._meta.get_field(field.lower()).null:
-                    data_dict[field.lower()] = None
+                if model._meta.get_field(aliases[field.lower()]).null:
+                    data_dict[aliases[field.lower()]] = None
 
             else:
-                data_dict[field.lower()] = value
+                data_dict[aliases[field.lower()]] = value
 
-        data_dict['asset'] = Asset.objects.get(uid__exact=station_id)
+#        data_dict['lat'] = Lat(data_dict['lat']).value
+#        data_dict['lng'] = Lng(data_dict['lng']).value
+#        data_dict['date'] = Date(data_dict['date']).value
+#        data_dict['time'] = Time(data_dict['time']).value
 
         data_obj = model(**data_dict) # Create a model instance
         data_obj.clean(tzinfo=tzone) # Perform initial validation
         try:
-            model.objects.get(timestamp__exact=data_obj.timestamp) # Check to see if the record already exists
+            model.objects.get(datetime__exact=data_obj.datetime) # Check to see if the record already exists
 
         except ObjectDoesNotExist:
             data_obj.save() # Save the record to the database only if it doesn't already exist
-            buoy_logger.debug("Saved record of %s with timestamp %s [Saved]" % (model._meta.object_name, data_dict['timestamp']))
+            logger.debug("Saved record of %s with timestamp %s [Saved]" % (model._meta.object_name, data_dict['datetime']))
 
 
 def append_to_log(entry):

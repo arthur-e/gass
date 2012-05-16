@@ -3,7 +3,6 @@ import os
 from ConfigParser import RawConfigParser
 config = RawConfigParser()
 config.read('/etc/gass/settings.ini')
-logfile = config.get('logging', 'LOG_FILENAME')
 
 SETTINGS_ROOT = os.path.dirname(__file__)
 
