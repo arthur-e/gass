@@ -6,6 +6,7 @@ class Station(models.Model):
     '''
     site = models.CharField(max_length=255, unique=True)
     operational = models.BooleanField(help_text="Indicates that the station data should be reported")
+    upload_path = models.TextField(help_text="File system path to the directory or aggregate file where data are uploaded to")
 
 
 class Campaign(models.Model):
@@ -25,7 +26,7 @@ class Ablation(models.Model):
     Ablation measurement.
     '''
     objects = models.GeoManager()
-    valid = models.BooleanField()
+    valid = models.BooleanField(editable=False, help_text="Indiates whether the observation record is valid (this flag set by instrument only)")
     site = models.ForeignKey(Station, to_field='site')
     sats = models.IntegerField(verbose_name='satellites', help_text='Number of satellites')
     hdop = models.FloatField(help_text='Horizontal dilution of precision (HDOP)', null=True)
@@ -34,8 +35,10 @@ class Ablation(models.Model):
     datetime = models.DateTimeField(help_text='Date and time of measurement from GPS')
     lat = models.FloatField(help_text='Latitude (Deg, Dec. Min. N)')
     lng = models.FloatField(help_text='Longitude (Deg, Dec. Min. W)')
+    gps_valid = models.BooleanField(help_text="Indicates whether the GPS measurements are valid", default=True)
     elev = models.FloatField(verbose_name='altitude (m)')
-    range_cm = models.FloatField(verbose_name='acoustic range (cm)')
+    rng_cm = models.FloatField(verbose_name='acoustic range (cm)')
+    rng_cm_valid = models.BooleanField(help_text="Indicates whether the range measurement is valid", default=True)
     above = models.IntegerField(verbose_name='irradiance')
     below = models.IntegerField(verbose_name='reflectance')
     wind_spd = models.FloatField(verbose_name='wind speed (m/s)')
