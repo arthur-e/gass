@@ -1,20 +1,32 @@
 from django.contrib.gis.db import models
 
+class Station(models.Model):
+    '''
+    Ablatometer station, idealized i.e. designation B01 is re-used each year.
+    '''
+    site = models.CharField(max_length=255, unique=True)
+    operational = models.BooleanField(help_text="Indicates that the station data should be reported")
+
+
+class Campaign(models.Model):
+    '''
+    Ablation measurement campaign.
+    '''
+    site = models.ForeignKey(Station, to_field='site')
+    season = models.IntegerField(help_text="The year the ablatometer was deployed")
+    deployment = models.DateField(help_text="Date of the deployment")
+    recovery = models.DateField(help_text="Date of recovery")
+    region = models.CharField(max_length=255, help_text="General description of the deployed location e.g. Tashalich Arm")
+    has_uplink = models.BooleanField(help_text="Indicates that the instrument was equipped with a satellite uplink")
+
+
 class Ablation(models.Model):
     '''
-    Ablation measurement from the 2012 campaign.
+    Ablation measurement.
     '''
-    STATIONS = (
-        ('t01', 'T01'),
-        ('b01', 'B01'),
-        ('b02', 'B02'),
-        ('b03', 'B03'),
-        ('b04', 'B04'),
-        ('b06', 'B06')
-    )
     objects = models.GeoManager()
     valid = models.BooleanField()
-    site = models.CharField(max_length=255, choices=STATIONS)
+    site = models.ForeignKey(Station, to_field='site')
     sats = models.IntegerField(verbose_name='satellites', help_text='Number of satellites')
     hdop = models.FloatField(help_text='Horizontal dilution of precision (HDOP)', null=True)
     time = models.TimeField()
