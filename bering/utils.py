@@ -52,7 +52,7 @@ class Lat(Coord):
         Assumption is that val is in DDMM.SS form where DD is the number of
         degrees of North latitude and MM.SS is the decimal minutes
         '''
-        self.value = int(val[0:2]) + Decimal(val[2:])/60
+        self.value = int(val[0:2]) + float(val[2:])/60
 
 
 class Lng(Coord):
@@ -62,5 +62,10 @@ class Lng(Coord):
         Assumption is that val is in DDDMM.SS form where DD is the number of
         degrees of West longitude and MM.SS is the decimal minutes
         '''
-        self.value = int(val[0:3]) + Decimal(val[3:])/60
+        # The split method produces a list like ['DDDMM', 'DD]
+        base = val.split('.')
+        self.degrees = int(base[0][0:-2]) # Grab all but the last two characters
+        self.minutes = int(base[0][-2:]) # Grab the last two characters
+        self.seconds = float(base[1][0:2]) + float(base[1][2:])/60
+        self.value = self.degrees + float(self.minutes + (self.seconds/60))/60
 

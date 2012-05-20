@@ -3,6 +3,7 @@ from __future__ import print_function
 import datetime, os, sys, csv logging
 from decimal import *
 
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.core.management import setup_environ
 os.environ["DJANGO_SETTINGS_MODULE"] = "gass.settings"
 sys.path.append('/usr/local/dev/')

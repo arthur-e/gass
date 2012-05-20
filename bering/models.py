@@ -1,4 +1,6 @@
+import re
 from django.contrib.gis.db import models
+from gass.bering.utils import *
 
 class Station(models.Model):
     '''
@@ -6,7 +8,8 @@ class Station(models.Model):
     '''
     site = models.CharField(max_length=255, unique=True)
     operational = models.BooleanField(help_text="Indicates that the station data should be reported")
-    upload_path = models.TextField(help_text="File system path to the directory or aggregate file where data are uploaded to")
+    upload_path = models.TextField(help_text="File system path to the file or directory where data are uploaded")
+    single_file = models.BooleanField(help_text="Indicates that data uploads are aggregate in a single file, specified by the record's upload_path", default=True)
 
 
 class Campaign(models.Model):
@@ -50,6 +53,20 @@ class Ablation(models.Model):
         return str(self.date) + ', ' + str(self.time)
 
 
+    @classmethod
+    def get_field_names(self, string=None):
+        '''
+        Returns a list of field names that match an optional string that can be
+        parsed as a regular expression.
+        '''
+        names = self._meta.get_all_field_names()
+        if string:
+            return [name for name in names if re.compile(string).match(name) != None]
+
+        else:
+            return [name for name in names]
+
+
     def clean(self, *args, **kwargs):
         '''
         Accepts a tzinfo keyword argument where tzinfo is an instance of
@@ -72,6 +89,8 @@ class Ablation(models.Model):
             self.time = Time(self.time).value.replace(tzinfo=kwargs['tzinfo'])
 
         self.datetime = datetime.datetime.combine(self.date, self.time).replace(tzinfo=kwargs['tzinfo'])
+
+        self.point = 'POINT(%s %s)' % (self.lng, self.lat)
 
 
 class B1Ablation(models.Model):
