@@ -27,8 +27,6 @@ DATABASES = {
         'PORT':     config.get('database', 'DATABASE_PORT'),
     }
 }
-POSTGIS_VERSION = (1, 5, 2)
-POSTGIS_TEMPLATE = 'postgis-1.5.2-template'
 
 CACHE_BACKEND = 'dummy:///'
 
@@ -40,6 +38,7 @@ CACHE_BACKEND = 'dummy:///'
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
 TIME_ZONE = 'UTC'
+USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -75,6 +74,7 @@ STATIC_DOC_ROOT = config.get('media','STATIC_DOC_ROOT')
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/admin_media/'
+STATIC_URL = '/admin_media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = config.get('secrets','SECRET_KEY')

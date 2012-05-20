@@ -11,6 +11,13 @@ class Station(models.Model):
     upload_path = models.TextField(help_text="File system path to the file or directory where data are uploaded")
     single_file = models.BooleanField(help_text="Indicates that data uploads are aggregate in a single file, specified by the record's upload_path", default=True)
 
+    def __unicode__(self):
+        return str(self.site)
+
+
+    def __str__(self):
+        return str(self.site)
+
 
 class Campaign(models.Model):
     '''
@@ -33,7 +40,7 @@ class Ablation(models.Model):
     site = models.ForeignKey(Station, to_field='site')
     sats = models.IntegerField(verbose_name='satellites', help_text='Number of satellites')
     hdop = models.FloatField(help_text='Horizontal dilution of precision (HDOP)', null=True)
-    time = models.TimeField()
+    time = models.TimeField(help_text="This is a naive time, not time-zone aware")
     date = models.DateField()
     datetime = models.DateTimeField(help_text='Date and time of measurement from GPS')
     lat = models.FloatField(help_text='Latitude (Deg, Dec. Min. N)')
@@ -50,7 +57,7 @@ class Ablation(models.Model):
     point = models.PointField(srid=4326)
 
     def __unicode__(self):
-        return str(self.date) + ', ' + str(self.time)
+        return '[%s] %s at %s' % (str(self.site_id), str(self.date), str(self.time))
 
 
     @classmethod
@@ -86,7 +93,8 @@ class Ablation(models.Model):
             self.date = Date(self.date).value
 
         if isinstance(self.time, str):
-            self.time = Time(self.time).value.replace(tzinfo=kwargs['tzinfo'])
+            # self.time = Time(self.time).value.replace(tzinfo=kwargs['tzinfo'])
+            self.time = Time(self.time).value
 
         self.datetime = datetime.datetime.combine(self.date, self.time).replace(tzinfo=kwargs['tzinfo'])
 
@@ -125,6 +133,7 @@ class B1Ablation(models.Model):
 
     def __unicode__(self):
         return str(self.date) + ', ' + str(self.time)
+
 
 class B2Ablation(models.Model):
     '''2011 ablation measurement at GASS B2; identical to B1Ablation model.'''
