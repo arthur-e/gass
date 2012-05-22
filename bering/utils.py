@@ -42,7 +42,10 @@ class Time:
         self.hour = int(val[0:2])
         self.minute = int(val[2:4])
         self.second = int(val[4:6])
-        self.value = datetime.time(hour=self.hour, minute=self.minute, second=self.second, tzinfo=UTC())
+        # No tzinfo argument is provided because while Django DOES support
+        #   timezone-aware datetime objects, it DOES NOT support timezone-aware
+        #   time objects
+        self.value = datetime.time(hour=self.hour, minute=self.minute, second=self.second)
 
 
 class Lat(Coord):

@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, ipdb
 import datetime, re, csv
 import logging
 logger = logging.getLogger('loading')
@@ -94,10 +94,11 @@ class Command(BaseCommand):
 
                 data_obj = model(**data_dict) # Create a model instance
                 data_obj.clean(tzinfo=UTC()) # Perform initial validation
-                try:
-                    model.objects.get(datetime__exact=data_obj.datetime) # Check to see if the record already exists
+                try: # Check to see if the record already exists
+                    model.objects.get(datetime__exact=data_obj.datetime)
 
                 except ObjectDoesNotExist:
+                    ipdb.set_trace()
                     data_obj.save() # Save the record to the database only if it doesn't already exist
                     logger.debug("Saved record of site %s with timestamp %s [Saved]" % (args[0], data_obj.datetime))
 

@@ -93,10 +93,11 @@ class Ablation(models.Model):
             self.date = Date(self.date).value
 
         if isinstance(self.time, str):
-            # self.time = Time(self.time).value.replace(tzinfo=kwargs['tzinfo'])
+            # Django does not support timezone-aware times, only datetimes
             self.time = Time(self.time).value
 
-        self.datetime = datetime.datetime.combine(self.date, self.time).replace(tzinfo=kwargs['tzinfo'])
+        self.datetime = datetime.datetime.combine(self.date,
+            self.time).replace(tzinfo=kwargs['tzinfo'])
 
         self.point = 'POINT(%s %s)' % (self.lng, self.lat)
 
