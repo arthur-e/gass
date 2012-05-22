@@ -1,4 +1,4 @@
-import os, sys, ipdb
+import os, sys
 import datetime, re, csv
 import logging
 logger = logging.getLogger('loading')
@@ -31,22 +31,28 @@ from gass.bering.models import *
 from gass.bering.utils import *
 
 class Command(BaseCommand):
-    args = '<site>'
-    help = 'Loads all available data from the station with the given <site> name'
+    args = '<site site...>'
+    help = 'Loads all available data from as many stations as <site> names given'
 
     def handle(self, *args, **options):
-        try:
-            station = Station.objects.get(site__exact=args[0])
-        except ObjectDoesNotExist:
-            logger.error("Command load_station_data called with an invalid <site> name")
-            return False
+        for site in args:
+            try:
+                station = Station.objects.get(site__exact=site)
+            except ObjectDoesNotExist:
+                logger.error("Command load_station_data called with an invalid <site> name")
+                return False
 
+            if not station.operational:
+                logger.info("Skipping data import for site %s because it is flagged as not operational" % site)
+                return False
+
+            # Finally, load the data for that station
+            self.load(station)
+
+
+    def load(self, station):
         model = Ablation
         model_fields = model().get_field_names()
-
-        if not station.operational:
-            logger.info("Skipping data import for site %s because it is flagged as not operational" % args[0])
-            return False
 
         # Maps field names in CSV to proper field names
         aliases = {
@@ -66,10 +72,12 @@ class Command(BaseCommand):
             'batt': 'volts'
         }
 
-        logger.info("Starting data import for site %s at %s" % (args[0], str(datetime.datetime.now())))
+        logger.info("Starting data import for site %s at %s" % (station.site,
+            str(datetime.datetime.now())))
 
         if station.single_file:
-            reader = csv.reader(open(station.upload_path, 'rb'), delimiter=',', quotechar='"')
+            reader = csv.reader(open(station.upload_path, 'rb'),
+                delimiter=',', quotechar='"')
             for line in reader:
                 l = reader.line_num # Lines start numbering at 1, not 0
                 if line == []:
@@ -98,9 +106,8 @@ class Command(BaseCommand):
                     model.objects.get(datetime__exact=data_obj.datetime)
 
                 except ObjectDoesNotExist:
-                    ipdb.set_trace()
                     data_obj.save() # Save the record to the database only if it doesn't already exist
-                    logger.debug("Saved record of site %s with timestamp %s [Saved]" % (args[0], data_obj.datetime))
+                    logger.debug("Saved record of site %s with timestamp %s [Saved]" % (station.site, data_obj.datetime))
 
         else:
             logger.warn("Support for multiple file uploads not implemented; it is expected that data are aggregated in a single file")
