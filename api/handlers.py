@@ -68,8 +68,13 @@ class APIHandler(BaseHandler):
         if step not in ['seconds', 'minutes', 'hours', 'days']:
             return self._respond_(rc.BAD_REQUEST, " - Parameter 'step' is expected to be one of the following: seconds, minutes, hours, or days")
 
-        # Initialize result set containing only those records for named station/site by sid
-        base = self.model.objects.filter(site__exact=attrs['sid'].lower())
+        # Initialize result set
+        if 'sid' in attrs.keys():
+            base = self.model.objects.filter(site__exact=attrs['sid'].lower())
+        else:
+            base = self.model.objects.all()
+
+        base = self.model.objects.filter(valid__exact=True)
         if len(base) == 0: return []
 
         # Retrieve the cache
@@ -119,7 +124,14 @@ class AblationHandler(APIHandler):
         except ValueError:
             return self._respond_(rc.BAD_REQUEST, " - One or both of the parameters 'begin' and 'end' are not formatted correctly")
 
-        query = self.model.objects.filter(timestamp__range=(begin, end)) # Initialize query
+        # Initialize result set
+        if 'sid' in attrs.keys():
+            query = self.model.objects.filter(site__exact=attrs['sid'].lower())
+        else:
+            query = self.model.objects.all()
+
+        query = query.filter(valid__exact=True).filter(datetime__range=(begin, end))
+        if len(query) == 0: return []
 
         # Filtering (multiple)
         if 'filter' in attrs:

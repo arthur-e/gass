@@ -85,7 +85,7 @@ class Ablation(models.Model):
 
     @classmethod
     def get_base_field_names(self):
-        return ['site', 'sats', 'hdop', 'datetime', 'lat', 'lng', 'elev', 'rng_cm', 'above', 'below', 'wind_spd', 'temp_C', 'volts']
+        return ('site_id', 'sats', 'hdop', 'datetime', 'lat', 'lng', 'elev', 'rng_cm', 'above', 'below', 'wind_spd', 'temp_C', 'volts')
 
 
     def clean(self, *args, **kwargs):
