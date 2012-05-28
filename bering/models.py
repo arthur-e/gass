@@ -10,6 +10,7 @@ class Station(models.Model):
     operational = models.BooleanField(help_text="Indicates that the station data should be reported")
     upload_path = models.TextField(help_text="File system path to the file or directory where data are uploaded")
     single_file = models.BooleanField(help_text="Indicates that data uploads are aggregate in a single file, specified by the record's upload_path", default=True)
+    utc_offset = models.IntegerField(help_text="The UTC offset, in hours, positive or negative")
 
     def __unicode__(self):
         return str(self.site)
@@ -17,6 +18,14 @@ class Station(models.Model):
 
     def __str__(self):
         return str(self.site)
+
+
+    def clean(self, *args, **kwargs):
+        '''
+        Validates and/or cleans input before saving to the databse.
+        '''
+        # Force site names to be lowercase
+        self.site = str(self.site).lower()
 
 
 class Campaign(models.Model):
@@ -72,6 +81,11 @@ class Ablation(models.Model):
 
         else:
             return [name for name in names]
+
+
+    @classmethod
+    def get_base_field_names(self):
+        return ['site', 'sats', 'hdop', 'datetime', 'lat', 'lng', 'elev', 'rng_cm', 'above', 'below', 'wind_spd', 'temp_C', 'volts']
 
 
     def clean(self, *args, **kwargs):

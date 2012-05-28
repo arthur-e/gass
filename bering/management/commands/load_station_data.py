@@ -40,11 +40,11 @@ class Command(BaseCommand):
                 station = Station.objects.get(site__exact=site)
             except ObjectDoesNotExist:
                 logger.error("Command load_station_data called with an invalid <site> name")
-                return False
+                continue # With the next site in args
 
             if not station.operational:
                 logger.info("Skipping data import for site %s because it is flagged as not operational" % site)
-                return False
+                continue # With the next site in args
 
             # Finally, load the data for that station
             self.load(station)

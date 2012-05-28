@@ -14,8 +14,11 @@ class ExtJSONEmitter(Emitter):
             'success': True,
             'data': package,
         }
+
+        # Try to add a 'results' param with the number of records
         try: ext_dict['results'] = len(package)
         except TypeError: pass
+
         seria = simplejson.dumps(ext_dict, cls=DateTimeAwareJSONEncoder, ensure_ascii=False, separators=(',',':'), indent=4) 
         # Remove separators argument set indent to 4 for "pretty printing"
 
