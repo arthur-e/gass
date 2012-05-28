@@ -112,10 +112,10 @@ INSTALLED_APPS = (
 #   'django.contrib.sites',
     'django.contrib.messages',
 #   'django.contrib.gis',
+    'django.contrib.admin',
+    'gass.api',
     'gass.bering',
     'gass.public',
-    # Uncomment the next line to enable the admin:
-    'django.contrib.admin',
 )
 
 # A sample logging configuration. The only tangible logging

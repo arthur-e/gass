@@ -5,6 +5,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/', include('GreatLakesObs.api.urls')),
     url(r'^$',                      'gass.public.views.display_index',
         name='public_index'),
     url(r'^background/$',           'gass.public.views.display_about',
