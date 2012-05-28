@@ -102,6 +102,10 @@ class Ablation(models.Model):
         self.point = 'POINT(%s %s)' % (self.lng, self.lat)
 
 
+    class Meta:
+        get_latest_by = 'datetime'
+
+
 class B1Ablation(models.Model):
     '''2011 ablation measurement at GASS B1; identical to B2Ablation model.'''
     satellites = models.IntegerField('Number of Satellites')

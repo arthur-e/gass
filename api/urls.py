@@ -3,6 +3,6 @@ from piston.resource import Resource
 from handlers import *
 
 urlpatterns = patterns('',
-    #url('^ibutton$', Resource(IButtonHandler), {'emitter_format': 'ext-json'}),
+    url('^ablation$', Resource(AblationHandler), {'emitter_format': 'ext-json'}),
 )
 

@@ -21,3 +21,178 @@ class APIHandler(BaseHandler):
         return response
 
 
+    def _dates_(self):
+        '''
+        A dates query.
+        '''
+        # Retrieve the cache
+        cq = cache.get('%s_dates_query' % self.model._meta.object_name)
+
+        # If a cached copy exists, return it
+        if cq is not None:
+            return cq
+
+        query = self.model.objects.dates('datetime', 'day').only('datetime')
+
+        dates_list = []
+        for date in query:
+            # Send the dates as a string to avoid client-side reformatting
+            #   of Javascript date objects
+            dates_list.append(date.strftime("%Y-%m-%d"))
+
+        results = [{
+            'asset': str(self.model.objects.latest().site),
+            'dates': dates_list
+        }]
+
+        # Cache result for 59 minutes
+        cache.set('%s_dates_query' % self.model._meta.object_name, results, 59*60)
+
+        return results
+
+
+class AblationHandler(APIHandler):
+    '''
+    '''
+    model = Ablation
+    exclude = ('id','pk') # Preserve default of excluding primary keys
+    services = [
+        'GetDates', 
+        'GetLatest', 
+        'GetObservation', 
+    ]
+
+#    def _observation_(self, attrs):
+#        '''
+#        A query for time series observations.
+#        '''
+#        for param in ['begin', 'end']:
+#            if param not in attrs.keys():
+#                return self._respond_(rc.BAD_REQUEST, " - Parameter '%s' was expected but not received" % param)
+
+#        try:
+#            begin = datetime.datetime.strptime(attrs['begin'], '%Y-%m-%dT%H:%M:%S')
+#            end = datetime.datetime.strptime(attrs['end'], '%Y-%m-%dT%H:%M:%S')
+
+#        except ValueError:
+#            return self._respond_(rc.BAD_REQUEST, " - One or both of the parameters 'begin' and 'end' are not formatted correctly")
+
+#        query = self.model.objects.filter(timestamp__range=(begin, end)) # Initialize query
+
+#        # Filtering (multiple)
+#        if 'filter' in attrs:
+#            # Decode JSON request to Python obj
+#            try: obj = json.loads(attrs['filter']) 
+#            except ValueError: return rc.BAD_REQUEST
+#            qry = {} # Dictionary of filters to be passed in as keyword args
+
+#            # Check that there aren't too many filters
+#            if len(obj) > 5:
+#                return rc.THROTTLED
+
+#            # For each filter (dictionary), determine its type
+#            for fltr in obj:
+#                if fltr['type'] == 'numeric':
+#                    comp = '__' + fltr['comparison']
+#                    if fltr['comparison'] == 'eq':
+#                        comp = '__exact'
+
+#                    qry[fltr['field'] + comp] = fltr['value']
+
+#                elif fltr['type'] == 'string':
+#                    if fltr['field'] == 'geom':
+#                        qry[fltr['field'] + '__within'] = fltr['value']
+
+#                    else:
+#                        qry[fltr['field'] + '__icontains'] = fltr['value']
+
+#                elif fltr['type'] == 'list':
+#                    qry[fltr['field'] + '__in'] = fltr['value']
+
+#                else:
+#                    return rc.NOT_IMPLEMENTED
+
+#            query = query.filter(**qry)
+# 
+#        # Sorting (multiple)
+#        if 'sort' in attrs:
+#            # Decode JSON request to Python obj
+#            try: obj = json.loads(attrs['sort']) 
+#            except ValueError: return rc.BAD_REQUEST
+#            qry = [] # List of filters to be passed in as arguments
+
+#            # Check that there aren't too many sort fields
+#            if len(obj) > 3:
+#                return rc.THROTTLED
+
+#            # For each sorter (dictionary), determine the direction
+#            for sorter in obj:
+#                if sorter['direction'] != '':
+#                    if sorter['direction'].lower() == 'desc':
+#                        qry.append('-' + sorter['field'])
+
+#                    elif sorter['direction'].lower() == 'asc':
+#                        qry.append(sorter['field'])
+
+#                    else:
+#                        return rc.BAD_REQUEST
+
+#            query = query.order_by(*qry)
+
+#        # Paging
+#        if 'limit' in attrs.keys():
+#            if 'index' in attrs.keys(): index = int(attrs['index']) 
+#            else: index = 0 # Starting record index
+#            limit = index + int(attrs['limit']) # Ending record index
+#            return query[index:limit]
+
+#        # Finally, downselecting
+#        if 'fields' in attrs.keys():
+#            try: fields = json.loads(attrs['fields'])
+#            except ValueError: return rc.BAD_REQUEST
+
+#            results = []
+#            # Check that all requested field names are valid fields
+#            for field in fields:
+#                if field not in self.model.get_field_names():
+#                    return self._respond_(rc.BAD_REQUEST, " - An invalid field name was passed in the list of 'fields'")
+
+#            # Operate on each record dictionary, extrating only desired fields
+#            for each in query.values():
+#                data_dict = {}
+#                for field in fields:
+#                    data_dict[field] = each[field]
+
+#                results.append(data_dict)
+
+#            return results
+
+#        # If no downselecting, the result is the QuerySet
+#        return query
+
+
+    def read(self, request):
+        '''
+        The handler for HTTP GET requests.
+        '''
+        attrs = self.flatten_dict(request.GET)
+
+        # Basic rejection of requests without specification
+        if 'request' not in attrs.keys():
+            return self._respond_(rc.BAD_REQUEST, " - Parameter 'request' was expected but not received")
+
+        # Reject requests for unsupported services
+        if attrs['request'] not in self.services:
+            return rc.NOT_IMPLEMENTED
+
+        # GetDates: Query available dates e.g. localhost/api/buoy/45023?request=GetDates
+        if attrs['request'] == 'GetDates':
+            return self._dates_()
+
+        # GetLatest: Query latest data by hours e.g. localhost/api/buoy/45023?request=GetLatest&span=24&step=hour
+        if attrs['request'] == 'GetLatest':
+            return self._latest_(attrs['span'], attrs['step'])
+
+        # GetObservation: Query time series observations e.g. localhost/api/buoy/45023?request=GetObservation&begin=2012-04-24T00:00:00&end=2012-04-24T00:06:00
+        if attrs['request'] == 'GetObservation':
+            return self._observation_(attrs)
