@@ -103,6 +103,7 @@ class AblationHandler(APIHandler):
     model = Ablation
     fields = model.get_base_field_names()
     exclude = ('id','pk') # Preserve default of excluding primary keys
+    allowed_methods = ('GET',)
     services = [
         'GetDates', 
         'GetLatest', 
