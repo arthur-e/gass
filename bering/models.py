@@ -1,4 +1,4 @@
-import re, ipdb
+import re, math, ipdb
 from django.contrib.gis.db import models
 from gass.bering.utils import *
 
@@ -65,8 +65,14 @@ class Ablation(models.Model):
     volts = models.FloatField(verbose_name='battery voltage (V)')
     point = models.PointField(srid=4326)
 
+
+    class Meta:
+        get_latest_by = 'datetime'
+
+
     def __unicode__(self):
-        return '[%s] %s at %s' % (str(self.site_id), str(self.date), str(self.time))
+        return '[%s] %s at %s' % (str(self.site_id),
+            str(self.date), str(self.time))
 
 
     @classmethod
@@ -85,7 +91,8 @@ class Ablation(models.Model):
 
     @classmethod
     def get_base_field_names(self):
-        return ('site_id', 'sats', 'hdop', 'datetime', 'lat', 'lng', 'elev', 'rng_cm', 'above', 'below', 'wind_spd', 'temp_C', 'volts')
+        return ('site_id', 'sats', 'hdop', 'datetime', 'lat', 'lng', 'elev',
+            'rng_cm', 'above', 'below', 'wind_spd', 'temp_C', 'volts')
 
 
     def clean(self, *args, **kwargs):
@@ -124,7 +131,7 @@ class Ablation(models.Model):
         td = datetime.timedelta(hours=1)
         foretime = self.datetime + td # An hour later
         backtime = self.datetime - td # An hour earlier
-        # Get a window of observations around this one sorted datetime descending
+        # Get a window of observations around this sorted datetime descending
         window = Ablation.objects.filter(site__exact=self.site,
             datetime__range=(backtime, foretime)).order_by('-datetime')
 
@@ -172,8 +179,29 @@ class Ablation(models.Model):
             self.rng_cm_valid = False
 
 
-    class Meta:
-        get_latest_by = 'datetime'
+    def geographic_distance(self, obj):
+        '''
+        Calculates the distance, in meters, between the position of this
+        measurement and another.
+        Accepts:
+            obj     {Ablation}  Another Ablation model instance
+        Returns:
+            {Float} The net migration, in meters, between the two observations
+        '''
+        lat_m_per_degree = 111412.0
+        lng_m_per_degree = 55800.0
+        # 111,412 m/degree of latitude at 60 degrees north latitude
+        #   (from National Geospatial Intelligence Agency)
+        # 55,800 m/degree of longitude at 60 degrees north latitude
+        #   (from National Geospatial Intelligence Agency)
+        # http://msi.nga.mil/MSISiteContent/StaticFiles/Calculators/degree.html
+
+        lat_diff_m = abs(lat_m_per_degree*(self.lat - obj.lat))
+        lng_diff_m = abs(lng_m_per_degree*(self.lng - obj.lng))
+
+        # Simple distance estimate in meters between last and last observation
+        distance_m = math.sqrt((lat_diff_m*lat_diff_m) + (lng_diff_m*lng_diff_m))
+        return distance_m
 
 
 class B1Ablation(models.Model):
