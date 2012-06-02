@@ -41,7 +41,6 @@ class APIHandler(BaseHandler):
             dates_list.append(date.strftime("%Y-%m-%d"))
 
         results = [{
-            'asset': str(self.model.objects.latest().site),
             'dates': dates_list
         }]
 

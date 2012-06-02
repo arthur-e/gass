@@ -1,4 +1,4 @@
-import re
+import re, ipdb
 from django.contrib.gis.db import models
 from gass.bering.utils import *
 
@@ -112,8 +112,64 @@ class Ablation(models.Model):
 
         self.datetime = datetime.datetime.combine(self.date,
             self.time).replace(tzinfo=kwargs['tzinfo'])
-
         self.point = 'POINT(%s %s)' % (self.lng, self.lat)
+        self.rng_cm = float(self.rng_cm)
+        self.check_flags()
+
+
+    def check_flags(self, *args, **kwargs):
+        '''
+        A validation procedure setting gps_valid and rng_cm_valid flags.
+        '''
+        td = datetime.timedelta(hours=1)
+        foretime = self.datetime + td # An hour later
+        backtime = self.datetime - td # An hour earlier
+        # Get a window of observations around this one sorted datetime descending
+        window = Ablation.objects.filter(site__exact=self.site,
+            datetime__range=(backtime, foretime)).order_by('-datetime')
+
+        # Find the first adjacent record earlier in time
+        if len(window) > 1:
+            for each in window:
+                if each.datetime.replace(tzinfo=UTC()) < self.datetime:
+                    last = each
+                    break
+
+        elif len(window) == 1:
+            # Only if the record is previous in time...
+            if window[0].datetime.replace(tzinfo=UTC()) < self.datetime:
+                last = window[0]
+            else: last = None
+
+        # No adjacent measurements in time
+        elif len(window) == 0: last = None
+
+        else: return ValueError
+
+        # TEST: Sufficient satellite constellation?
+        if self.sats < 3:
+            self.gps_valid = False
+            # No test for hdop; do that in database queries where concerned
+
+        # TEST: Obviously bogus acoustic measurements (greater than 600 cm)?
+        if self.rng_cm > 600.0:
+            self.rng_cm_valid = False
+
+        if last is None: return None
+
+        datetime_diff = abs((self.datetime - last.datetime.replace(tzinfo=UTC())).seconds)
+        rng_cm_diff = abs(self.rng_cm - last.rng_cm)
+
+        # TEST: Indpendent measurements?
+        if datetime_diff < 1600:
+            # Expected that measurements no more frequent than every 20 minutes
+            self.gps_valid = False
+
+        # TEST: Likely bogus acoustic measurements?
+        if datetime_diff < 4200 and rng_cm_diff > 10.0 and last.rng_cm < 600.0:
+            # Closely-separated measurements in time (less than 70 minutes)
+            #   with more than 10 cm melt are likely invalid
+            self.rng_cm_valid = False
 
 
     class Meta:
@@ -121,7 +177,10 @@ class Ablation(models.Model):
 
 
 class B1Ablation(models.Model):
-    '''2011 ablation measurement at GASS B1; identical to B2Ablation model.'''
+    '''
+    For backwards compatibility: 2011 ablation measurement at GASS B1;
+    identical to B2Ablation model.
+    '''
     satellites = models.IntegerField('Number of Satellites')
     hdop = models.FloatField('Dilution of Precision', null=True)
     time = models.TimeField('Time')
@@ -155,7 +214,10 @@ class B1Ablation(models.Model):
 
 
 class B2Ablation(models.Model):
-    '''2011 ablation measurement at GASS B2; identical to B1Ablation model.'''
+    '''
+    For backwards compatibility: 2011 ablation measurement at GASS B2;
+    identical to B1Ablation model.
+    '''
     satellites = models.IntegerField('Number of Satellites')
     hdop = models.FloatField('Dilution of Precision', null=True)
     time = models.TimeField('Time')
