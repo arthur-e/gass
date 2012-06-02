@@ -81,6 +81,13 @@
         </div>
         {% endblock id-credits %}
 
+        {% block id-disclaimer %}
+        <div id="disclaimer">
+            &copy; 2012 <a href="http://www.mtri.org/" target="_blank">Michigan Tech Research Institute</a> | 
+            This website and its content are not administered or endorsed by either the U.S. Bureau of Land Management or the U.S. Geological Survey.
+        </div>
+        {% endblock id-disclaimer %}
+
     </div>
     {% endblock id-canvas %}
 
@@ -100,12 +107,6 @@
                     <a href="/gass/team/">Project Team</a>
                 </div>
             </div>
-            {% block id-disclaimer %}
-            <div id="disclaimer">
-                &copy; 2012 <a href="http://www.mtri.org/" target="_blank">Michigan Tech Research Institute</a><br />
-                This website and its content are not administered or endorsed by either the U.S. Bureau of Land Management or the U.S. Geological Survey.
-            </div>
-            {% endblock id-disclaimer %}
         </div>
     {% endblock id-attribution %}
 </body>
