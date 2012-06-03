@@ -1,0 +1,19 @@
+<!--<img class="bullet nudgeup" src="/gass/media/img/flag_{% cycle 'blue' 'yellow' 'red' 'green' 'purple' 'orange' 'pink' %}.png" />-->
+{% if site.operational %}
+    {% if site.gps_valid and site.rng_cm_valid %}
+        <img class="bullet nudgeup" src="/gass/media/img/bullet_green.png" title="Last measurement checks out okay" />
+    {% else %}
+        {% if site.gps_valid and not site.rng_cm_valid %}
+            <img class="bullet nudgeup" src="/gass/media/img/bullet_orange.png" title="Last ablation measurement not valid" />
+        {% else %}
+            {% if site.rng_cm_valid and not site.gps_valid %}
+                <img class="bullet nudgeup" src="/gass/media/img/bullet_orange.png" title="Last GPS measurement not valid" />
+            {% else %}
+                <img class="bullet nudgeup" src="/gass/media/img/bullet_red.png" title="Last measurement unreliable; neither GPS nor ablation measurements deemed valid" />
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% else %}
+    <img class="bullet nudgeup" src="/gass/media/img/bullet_white.png" title="Site not operational; no data available" />           
+{% endif %}
+

@@ -43,9 +43,9 @@ ul {list-style:square outside;text-align:left;}
 #credits {float:right;width:220px;margin:20px 0px 10px 20px;text-align:center;clear:right;}
 .date {color:#036;font-family:MerriweatherRegular,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;}
 .datum {clear:both;margin:20px 0 40px 40px;}
-#disclaimer {width:100%;line-height:15px;margin:0;padding:5px;font-size:75%;color:#666;text-align:left;background:rgba(255,255,255,0.8);clear:both;}
+#disclaimer {width:100%;margin:20px 0 0;padding:5px 5px 5px 10%;line-height:15px;font-size:10px;color:#999;text-align:justify;clear:both;background:#555;}
 #disclaimer a:link,
-#disclaimer a:visited {color:#18F;}
+#disclaimer a:visited {color:#5AF;}
 #disclaimer a:hover,
 #disclaimer a:active {color:#F00;border:none;}
 #feature {float:left;width:30%;padding:20px;position:relative;top:50px;background:rgba(204,204,204,0.6);font-family:MerriweatherRegular,Georgia,serif;font-size:16px;color:black;text-shadow:0 0 6px rgba(0, 0, 0, 0.3);border-bottom:5px solid #666;text-align:left;}
@@ -60,6 +60,7 @@ ul {list-style:square outside;text-align:left;}
 .indent {text-indent:20px;}
 #index-sites {float:right;}
 .lead {font-weight:bold;font-style:italic;font-size:110%;}
+.list {line-height:24px;}
 #location-map {z-index:99;width:220px;height:125px;float:right;margin:0 0 10px 10px;}
 #logo-mtri, #logo-blm, #logo-usgs {display:block;float:right;border:none;margin-bottom:20px;padding:0px 40px;}
 #logo-mtri, #logo-blm, #logo-usgs, {vertical-align:bottom;float:right;display:block;}
@@ -80,16 +81,18 @@ ul {list-style:square outside;text-align:left;}
     filter: progid: DXImageTransform.Microsoft.Shadow(strength = 2, direction = 180, color = '#333333');
     -ms-filter: "progid: DXImageTransform.Microsoft.Shadow(strength = 2, Direction = 180, Color = '#333333')";
 }
-.menu a {display:block;padding:2px 5px 0 5px;color:#333;}
+.menu a,
+.menu div {display:block;padding:2px 5px 0 5px;color:#333;}
 .menu a:link,
 .menu a:visited {color:#333 !important;border-top:1px solid #CCC;border-bottom:1px solid transparent;}
 .menu a:hover,
 .menu a:active {color:#333 !important;background:#BDF;}
-.menu .emphasis {color:#036;}
-.menu .bullet {padding:0 5px 0 0;}
+.menu .emphasis {color:#036;cursor:pointer;}
+.menu .bullet {padding:0;}
 .menu .bullet,
-.menu .icon {vertical-align:middle;display:inline;float:none;}
-.menu .icon {padding:0 0 0 10px;}
+.menu .icon {vertical-align:middle;display:inline;float:none;cursor:pointer;}
+.menu .icon {padding:0 0 0 5px;}
+.menu .padless {padding:2px 0 0;}
 .menu .subheading,
 .menu .heading,
 .tool {display:inline-block;font-weight:bold;padding:2px 5px 0 5px;font-family:Helvetica,Arial,arial,freesans,clean,sans-serif;text-shadow:1px 1px 0 #FFF;}

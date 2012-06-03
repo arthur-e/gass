@@ -108,7 +108,8 @@ class Ablation(models.Model):
             else: self.valid = False
 
         if isinstance(self.lng, str):
-            self.lng = Lng(self.lng).value
+            # For now, force the negation of longitude values (raw data don't distinguish)
+            self.lng = -float(Lng(self.lng).value)
 
         if isinstance(self.lat, str):
             self.lat = Lat(self.lat).value
@@ -122,7 +123,8 @@ class Ablation(models.Model):
 
         self.datetime = datetime.datetime.combine(self.date,
             self.time).replace(tzinfo=kwargs['tzinfo'])
-        self.point = 'POINT(%s %s)' % (self.lng, self.lat)
+        # For now, force the negation of longitude values
+        self.point = 'POINT(%s %s)' % (-float(self.lng), self.lat)
         self.rng_cm = float(self.rng_cm)
         self.check_flags()
 

@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.core.cache import cache
@@ -5,51 +6,76 @@ from django.views.decorators.cache import cache_page
 from public.models import News
 from bering.models import Station, Ablation
 
+def load_defaults():
+    '''
+    The base.html template requires this load routine.
+    '''
+    sites = Station.objects.all().order_by('site')
+    stations = []
+    campaigns = []
+    then = datetime.datetime(1900,1,1,0,0,0)
+    for each in sites:
+        latest_campaign = each.campaign_set.latest()
+        latest_ablation = each.ablation_set.latest()
+        latest_ablation.operational = each.operational
+
+        # Get the latest ablation observation for each site
+        stations.append(latest_ablation)
+
+        # Get a list of field campaigns and latest observational data
+        campaigns.append({
+            'region': latest_campaign.region,
+            'site': latest_campaign.site,
+            'lat': latest_ablation.lat,
+            'lng': latest_ablation.lng,
+            'datetime': latest_ablation.datetime,
+            'gps_valid': latest_ablation.gps_valid,
+            'rng_cm_valid': latest_ablation.rng_cm_valid,
+            'operational': each.operational
+        })
+
+        if latest_ablation.datetime > then: then = latest_ablation.datetime
+
+    return {
+        'stations': stations,
+        'campaigns': campaigns,
+        'then': then
+    }
+
+
 def display_index(request):
     '''
     localhost/gass/
     '''
-    sites = Station.objects.filter(operational__exact=True).order_by('site')
-
-    # Get the latest ablation observation for each site
-    stations = []
-    for each in sites:
-        stations.append(each.ablation_set.latest())
-
-    campaigns = []
-    for each in sites:
-        campaigns.append(each.campaign_set.latest())
-
-    return render_to_response('index.html', {
-        'news': News.objects.all().order_by('-timestamp')[0:5],
-        'stations': stations,
-        'campaigns': campaigns
-    })
+    data_dict = load_defaults()
+    data_dict['news'] = News.objects.all().order_by('-timestamp')[0:5]
+    data_dict['now'] = datetime.datetime.now()
+    return render_to_response('index.html', data_dict)
 
 
 def display_about(request):
     '''
     localhost/gass/about/
     '''
-    return render_to_response('about.html', {})
+    return render_to_response('about.html', load_defaults())
 
 
 def display_access(request):
     '''
     localhost/gass/access/
     '''
-    return render_to_response('data.html', {})
+    return render_to_response('data.html', load_defaults())
 
 
 def display_instruments(request):
     '''
     localhost/gass/hardware/
     '''
-    return render_to_response('instruments.html', {})
+    return render_to_response('instruments.html', load_defaults())
 
 
 def display_team(request):
     '''
     localhost/gass/team/
     '''
-    return render_to_response('team.html', {})
+    return render_to_response('team.html', load_defaults())

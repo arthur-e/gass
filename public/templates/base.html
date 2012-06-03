@@ -81,13 +81,6 @@
         </div>
         {% endblock id-credits %}
 
-        {% block id-disclaimer %}
-        <div id="disclaimer">
-            &copy; 2012 <a href="http://www.mtri.org/" target="_blank">Michigan Tech Research Institute</a> | 
-            This website and its content are not administered or endorsed by either the U.S. Bureau of Land Management or the U.S. Geological Survey.
-        </div>
-        {% endblock id-disclaimer %}
-
     </div>
     {% endblock id-canvas %}
 
@@ -111,21 +104,29 @@
                 <div class="menu">
                     <div class="heading medium">Campaigns</div>
                         {% for site in campaigns %}
-                            <a href="#">
-                                <img class="bullet nudgeup" src="/gass/media/img/flag_{% cycle 'blue' 'yellow' 'red' 'green' 'purple' 'orange' 'pink' %}.png" />
-                                <span class="emphasis">{{ site.site|upper }} - </span>
+                            <div>
+                                {% include "indicator_icon.html" %}
+                                <span class="emphasis" title="({{ site.datetime }}) {{ site.lat|floatformat:5 }}{% if site.lat >= 0 %}°N{% else %}°S{% endif %}, {{ site.lng|floatformat:5 }}{% if site.lng >= 0 %}°E{% else %}°W{% endif %}">{{ site.site|upper }} - </span>
                                 {{ site.region }}
-                                <!--
-                                {{ site.lat|floatformat:3 }}{% if site.lat >= 0 %}°N{% else %}°S{% endif %},
-                                {{ site.lng|floatformat:3 }}{% if site.lng >= 0 %}°E{% else %}°W{% endif %}
-                                -->
-                            </a>
+                                <img onclick="window.open('http://maps.googleapis.com/maps/api/staticmap?center={{ site.lat }},{{ site.lng }}&zoom=10&size=300x300&maptype=terrain&markers=color:blue%7C{{ site.lat }},{{ site.lng }}&sensor=false','_blank','width=320,height=320,location=no,scrollbars=no,titlebar=no,menubar=no,resizable=no,status=no,toolbar=no')" class="icon nudgeup" src="/gass/media/img/pin.png" title="View last position on a map"/>
+                            </div>
                         {% endfor %}
                         </a>
                     </div>
                 </div>
             </div>
+
+
+        {% block id-disclaimer %}
+        <div id="disclaimer">
+            &copy; 2012 <a href="http://www.mtri.org/" target="_blank">Michigan Tech Research Institute</a>
+            <br />Some Icons by <a href="http://www.iconarchive.com/show/farm-fresh-icons-by-fatcow.1.html" target="_blank">FarmFresh</a>
+            <br />This website and its content are not administered or endorsed by either the U.S. Bureau of Land Management or the U.S. Geological Survey.
         </div>
+        {% endblock id-disclaimer %}
+
+        </div>
+
     {% endblock id-attribution %}
 </body>
 {% endblock tag-body %}
