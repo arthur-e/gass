@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load custom_tags %}
+
 {% block id-feature %}
 <div id="feature">
     <img id="location-map" src="/gass/media/img/location_map.gif" />
@@ -11,12 +13,35 @@
 
 {% block id-feed %}
 <div id="feed">
-    <!--<div class="widget">
-        <div class="menu" id="index-sites">
-            <div class="heading">Ablation Sites</div>
-            <a href="#">Blah</a>
+    <div class="panel" id="index-sites">
+        <div class="menu">
+            <div class="heading wide">Latest Conditions</div>
+            {% for site in observations %}
+                <a href="#" title="{{ site.site|upper }} ~ Air temp: {{ site.temp_C|convert:'degC_degF'|floatformat:1 }}°F | Melt: {{ site.rng_cm|floatformat:1 }} cm | Battery: {{ site.volts|floatformat:1 }} V | Wind spd: {{ site.wind_spd|convert:'m/s_knots'|floatformat:1 }} knots">
+                {{ site.site|upper }}
+                {% if site.temp_C >= 8 %}
+                    <img class="icon" src="/gass/media/img/warm.png" />
+                {% else %}
+                    <img class="icon" src="/gass/media/img/cold.png" />
+                {% endif %}
+                {{ site.temp_C|convert:"degC_degF"|floatformat:0 }}°F
+                <img class="icon" src="/gass/media/img/draw_convolve.png" />
+                {{ site.rng_cm|floatformat:0 }}cm
+                {% if site.volts >= 8.0 %}
+                    <img class="icon" src="/gass/media/img/battery_full.png" />
+                {% else %}
+                    {% if site.volts >= 7.75 %}
+                        <img class="icon" src="/gass/media/img/battery_half.png" />
+                    {% else %}
+                        <img class="icon" src="/gass/media/img/battery_low.png" />
+                    {% endif %}
+                {% endif %}
+                {{ site.volts|floatformat:1 }}V
+                </a>
+            {% endfor %}
+            <div class="subheading wide">Jun 3, 2012 @ 9:20 AM UTC</div>
         </div>
-    </div>-->
+    </div>
     {% autoescape off %}
     {% for item in news %}
         <div class="post">

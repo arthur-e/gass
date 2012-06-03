@@ -58,6 +58,7 @@ ul {list-style:square outside;text-align:left;}
 .icon a:hover,
 .icon a:active {border:none;}
 .indent {text-indent:20px;}
+#index-sites {float:right;}
 .lead {font-weight:bold;font-style:italic;font-size:110%;}
 #location-map {z-index:99;width:220px;height:125px;float:right;margin:0 0 10px 10px;}
 #logo-mtri, #logo-blm, #logo-usgs {display:block;float:right;border:none;margin-bottom:20px;padding:0px 40px;}
@@ -65,7 +66,6 @@ ul {list-style:square outside;text-align:left;}
 #logo-mtri {width:140px;height:102px;}
 #logo-blm {width:140px;height:122px;}
 #logo-usgs {width:140px;height:42px;}
-.menu-ribbon,
 .menu {list-style:none;line-height:24px;font-weight:bold;font-size:12px;color:#333;text-shadow:1px 1px 0 #FFF;
     background:#EEE;
     border-color:#D4D4D4 #D4D4D4 #BCBCBC;
@@ -85,8 +85,16 @@ ul {list-style:square outside;text-align:left;}
 .menu a:visited {color:#333 !important;border-top:1px solid #CCC;border-bottom:1px solid transparent;}
 .menu a:hover,
 .menu a:active {color:#333 !important;background:#BDF;}
+.menu .icon {vertical-align:middle;display:inline;float:none;padding:0 0 0 10px;}
+.menu .subheading,
 .menu .heading,
-.tool {display:inline-block;height:25px;width:150px;font-size:14px;font-style:italic;font-weight:bold;padding:2px 5px 0 5px;font-family:Helvetica,Arial,arial,freesans,clean,sans-serif;text-shadow:1px 1px 0 #FFFFFF;
+.tool {display:inline-block;font-weight:bold;padding:2px 5px 0 5px;font-family:Helvetica,Arial,arial,freesans,clean,sans-serif;text-shadow:1px 1px 0 #FFF;}
+.menu .narrow {width:150px;}
+.menu .medium {width:180px;}
+.menu .wide {width:210px;}
+.menu .subheading {background:#FFF;font-size:12px;font-style:normal;text-align:right;border-top:1px solid #CCC;}
+.menu .heading,
+.tool {height:25px;font-size:14px;font-style:italic;
     filter: progid: DXImageTransform.Microsoft.gradient(startColorstr = '#EEEEEE', endColorstr = '#AAAAAA');
     -ms-filter: "progid: DXImageTransform.Microsoft.gradient(startColorstr = '#EEEEEE', endColorstr = '#AAAAAA')";
     background-image: -moz-linear-gradient(top, #EEEEEE, #AAAAAA);
@@ -141,4 +149,3 @@ ul {list-style:square outside;text-align:left;}
     border-style:solid;
     border-width:1px;
 }
-.widget {}

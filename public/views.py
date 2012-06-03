@@ -3,13 +3,22 @@ from django.http import HttpResponse
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from public.models import News
+from bering.models import Station, Ablation
 
 def display_index(request):
     '''
     localhost/gass/
     '''
+    sites = Station.objects.filter(operational__exact=True).order_by('site')
+
+    # Get the latest ablation observation for each site
+    obs = []
+    for each in sites:
+        obs.append(each.ablation_set.latest())
+
     return render_to_response('index.html', {
-        'news': News.objects.all().order_by('-timestamp')[0:5]
+        'news': News.objects.all().order_by('-timestamp')[0:5],
+        'observations': obs
     })
 
 
