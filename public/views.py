@@ -12,13 +12,18 @@ def display_index(request):
     sites = Station.objects.filter(operational__exact=True).order_by('site')
 
     # Get the latest ablation observation for each site
-    obs = []
+    stations = []
     for each in sites:
-        obs.append(each.ablation_set.latest())
+        stations.append(each.ablation_set.latest())
+
+    campaigns = []
+    for each in sites:
+        campaigns.append(each.campaign_set.latest())
 
     return render_to_response('index.html', {
         'news': News.objects.all().order_by('-timestamp')[0:5],
-        'observations': obs
+        'stations': stations,
+        'campaigns': campaigns
     })
 
 

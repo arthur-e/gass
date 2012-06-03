@@ -107,6 +107,24 @@
                     <a href="/gass/team/">Project Team</a>
                 </div>
             </div>
+            <div class="attribute">
+                <div class="menu">
+                    <div class="heading medium">Campaigns</div>
+                        {% for site in campaigns %}
+                            <a href="#">
+                                <img class="bullet nudgeup" src="/gass/media/img/flag_{% cycle 'blue' 'yellow' 'red' 'green' 'purple' 'orange' 'pink' %}.png" />
+                                <span class="emphasis">{{ site.site|upper }} - </span>
+                                {{ site.region }}
+                                <!--
+                                {{ site.lat|floatformat:3 }}{% if site.lat >= 0 %}°N{% else %}°S{% endif %},
+                                {{ site.lng|floatformat:3 }}{% if site.lng >= 0 %}°E{% else %}°W{% endif %}
+                                -->
+                            </a>
+                        {% endfor %}
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     {% endblock id-attribution %}
 </body>

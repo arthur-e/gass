@@ -16,7 +16,7 @@
     <div class="panel" id="index-sites">
         <div class="menu">
             <div class="heading wide">Latest Conditions</div>
-            {% for site in observations %}
+            {% for site in stations %}
                 <a href="#" title="{{ site.site|upper }} ~ Air temp: {{ site.temp_C|convert:'degC_degF'|floatformat:1 }}°F | Melt: {{ site.rng_cm|floatformat:1 }} cm | Battery: {{ site.volts|floatformat:1 }} V | Wind spd: {{ site.wind_spd|convert:'m/s_knots'|floatformat:1 }} knots">
                 {{ site.site|upper }}
                 {% if site.temp_C >= 8 %}

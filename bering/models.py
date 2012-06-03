@@ -39,6 +39,9 @@ class Campaign(models.Model):
     region = models.CharField(max_length=255, help_text="General description of the deployed location e.g. Tashalich Arm")
     has_uplink = models.BooleanField(help_text="Indicates that the instrument was equipped with a satellite uplink")
 
+    class Meta:
+        get_latest_by = 'deployment'
+
 
 class Ablation(models.Model):
     '''
