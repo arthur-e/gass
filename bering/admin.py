@@ -9,6 +9,12 @@ class StationAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
+class SiteVisitAdmin(admin.ModelAdmin):
+    list_display = ('site', 'datetime', 'notes')
+    list_filter = ('ablato_adjusted',)
+    ordering = ('-datetime',)
+
+
 class CampaignAdmin(admin.ModelAdmin):
     list_display = ('site', 'region', 'deployment', 'recovery')
     list_editable = ('region', 'deployment', 'recovery')
@@ -18,4 +24,5 @@ class CampaignAdmin(admin.ModelAdmin):
     
 
 admin.site.register(Station, StationAdmin)
+admin.site.register(SiteVisit, SiteVisitAdmin)
 admin.site.register(Campaign, CampaignAdmin)

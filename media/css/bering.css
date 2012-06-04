@@ -24,8 +24,8 @@ font-weight: normal;
 src: url("/gass/media/font/Merriweather-Black-webfont.eot?#iefix") format("embedded-opentype"), url("/gass/media/font/Merriweather-Black-webfont.woff") format("woff"), url("/gass/media/font/Merriweather-Black-webfont.ttf") format("truetype"), url("/gass/media/font/Merriweather-Black-webfont.svg#MerriweatherBlack") format("svg");
 }
 
-a:link, a:visited {color:#036;text-decoration:none;border:none;}
-a:hover, a:active {color:#F00;text-decoration:none;border-bottom:1px dotted #F00;}
+a:link, a:visited {color:#036;text-decoration:none;}
+a:hover, a:active {color:#F00;text-decoration:none;}
 body {margin:0;padding:0;overflow-x:hidden;font-family:Helvetica,Arial,sans-serif;background-color:#666;text-align:right;color:black;}
 div {padding:0;margin:0;}
 ul {list-style:square outside;text-align:left;}
@@ -40,6 +40,14 @@ ul {list-style:square outside;text-align:left;}
 .citation a:active {color:inherit;text-decoration:none;border:none;}
 .container {width:90%;float:right;overflow:hidden;position:relative;top:30px;}
 #content {float:right;width:60%;padding:20px;background:rgba(255,255,255,0.8);}
+#content a:link,
+#feature a:link,
+#feature a:visited,
+#content a:visited {border:none;}
+#content a:hover,
+#feature a:hover,
+#feature a:active,
+#content a:active {border-bottom:1px dotted #F00;}
 #credits {float:right;width:220px;margin:20px 0px 10px 20px;text-align:center;clear:right;}
 .date {color:#036;font-family:MerriweatherRegular,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;}
 .datum {clear:both;margin:20px 0 40px 40px;}
@@ -84,10 +92,11 @@ ul {list-style:square outside;text-align:left;}
 .menu a,
 .menu div {display:block;padding:2px 5px 0 5px;color:#333;}
 .menu a:link,
-.menu a:visited {color:#333 !important;border-top:1px solid #CCC;border-bottom:1px solid transparent;}
+.menu a:visited {color:#333 !important;}
 .menu a:hover,
 .menu a:active {color:#333 !important;background:#BDF;}
 .menu .emphasis {color:#036;cursor:pointer;}
+.menu .bordered {border-bottom:1px solid #CCC;}
 .menu .bullet {padding:0;}
 .menu .bullet,
 .menu .icon {vertical-align:middle;display:inline;float:none;cursor:pointer;}

@@ -11,6 +11,7 @@ class Station(models.Model):
     upload_path = models.TextField(help_text="File system path to the file or directory where data are uploaded")
     single_file = models.BooleanField(help_text="Indicates that data uploads are aggregate in a single file, specified by the record's upload_path", default=True)
     utc_offset = models.IntegerField(help_text="The UTC offset, in hours, positive or negative")
+    init_height_cm = models.FloatField(verbose_name='initial sensor height in cm', help_text="The initial height of the instrument box, in centimeters")
 
     def __unicode__(self):
         return str(self.site)
@@ -28,6 +29,26 @@ class Station(models.Model):
         self.site = str(self.site).lower()
 
 
+class SiteVisit(models.Model):
+    '''
+    An in situ field visit, particular notable where ablatometer height was
+    adjusted manually.
+    '''
+    site = models.ForeignKey(Station, to_field='site')
+    datetime = models.DateTimeField(help_text="Date and time of site visit, in UTC")
+    ablato_adjusted = models.BooleanField(verbose_name='ablatometer was adjusted', default=True)
+    ablato_height_cm = models.FloatField(verbose_name='ablatometer height after adjustment in cm', blank=True, null=True)
+    notes = models.TextField()
+
+    class Meta:
+        get_latest_by = 'datetime'
+
+
+    def __unicode__(self):
+        return '%s: %d (%s)' % (self.site.upper(), self.ablato_height_cm,
+            self.datetime.strftime('%Y-%m-%d %H:%M:%S'))
+
+
 class Campaign(models.Model):
     '''
     Ablation measurement campaign.
@@ -38,9 +59,15 @@ class Campaign(models.Model):
     recovery = models.DateField(help_text="Date of recovery")
     region = models.CharField(max_length=255, help_text="General description of the deployed location e.g. Tashalich Arm")
     has_uplink = models.BooleanField(help_text="Indicates that the instrument was equipped with a satellite uplink")
+    site_visits = models.ManyToManyField(SiteVisit, blank=True, null=True)
 
     class Meta:
         get_latest_by = 'deployment'
+        unique_together = ('site', 'season')
+
+
+    def __unicode__(self):
+        return '%s (%d)' % (self.site.upper(), self.season)
 
 
 class Ablation(models.Model):
@@ -207,7 +234,6 @@ class Ablation(models.Model):
         # Simple distance estimate in meters between last and last observation
         distance_m = math.sqrt((lat_diff_m*lat_diff_m) + (lng_diff_m*lng_diff_m))
         return distance_m
-
 
 class B1Ablation(models.Model):
     '''

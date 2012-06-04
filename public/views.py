@@ -2,6 +2,7 @@ import datetime
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.cache import cache_page
 from public.models import News
 from bering.models import Station, Ablation
@@ -15,9 +16,32 @@ def load_defaults():
     campaigns = []
     then = datetime.datetime(1900,1,1,0,0,0)
     for each in sites:
-        latest_campaign = each.campaign_set.latest()
-        latest_ablation = each.ablation_set.latest()
-        latest_ablation.operational = each.operational
+        try:
+            latest_campaign = each.campaign_set.latest()
+            latest_ablation = each.ablation_set.latest()
+            latest_ablation.operational = each.operational
+
+        except ObjectDoesNotExist:
+            return {
+                'stations': [],
+                'campaigns': [],
+                'then': then
+            }
+
+        # Check for site visits where height of sensor may have changed
+        try:
+            last_visit = latest_campaign.site_visits.latest()
+            if last_visit.ablato_adjusted:
+                # Subtract sensor height when last adjusted
+                latest_ablation.rng_cm -= last_visit.ablation_height_cm
+
+            else:
+                # Subtract sensor height when sensor was installed
+                latest_ablation.rng_cm -= latest_campaign.site.init_height_cm
+
+        except ObjectDoesNotExist:
+            # No visits? Subtract sensor height when sensor was installed
+            latest_ablation.rng_cm -= latest_campaign.site.init_height_cm
 
         # Get the latest ablation observation for each site
         stations.append(latest_ablation)

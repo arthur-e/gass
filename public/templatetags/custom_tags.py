@@ -13,6 +13,7 @@ def convert(value, conversion):
         'hPa_mmHg': 0.750061561,
         'minLat_m': 1856.9, # The length of 1 arcminute at 60 degrees N
         'minLong_m': 930.0,
+        'cm_in': 0.3937
         }
 
     constants = {
@@ -21,6 +22,7 @@ def convert(value, conversion):
         'hPa_mmHg': 0.0,
         'minLat_m': 0.0,
         'minLong_m': 0.0,
+        'cm_in': 0.0,
         }
 
     if isinstance(value, Decimal):

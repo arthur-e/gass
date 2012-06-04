@@ -13,36 +13,38 @@
 
 {% block id-feed %}
 <div id="feed">
+    {% if stations %}
     <div class="panel" id="index-sites">
         <div class="menu">
             <div class="heading wide">Latest Conditions</div>
             {% for site in stations %}
-                <a class="padless" href="#" title="{{ site.site|upper }} ~ Air temp: {{ site.temp_C|convert:'degC_degF'|floatformat:1 }}°F | Melt: {{ site.rng_cm|floatformat:1 }} cm | Battery: {{ site.volts|floatformat:1 }} V | Wind spd: {{ site.wind_spd|convert:'m/s_knots'|floatformat:1 }} knots">
+                <div class="padless" href="#">
                 {% include "indicator_icon.html" %}
                 {{ site.site|upper }}
                 {% if site.temp_C >= 8 %}
-                    <img class="icon" src="/gass/media/img/warm.png" />
+                    <img class="icon" src="/gass/media/img/warm.png" title="{{ site.site|upper }} Air Temp: {{ site.temp_C|convert:'degC_degF'|floatformat:1 }}°F | {{ site.temp_C }}°C"/>
                 {% else %}
-                    <img class="icon" src="/gass/media/img/cold.png" />
+                    <img class="icon" src="/gass/media/img/cold.png" title="{{ site.site|upper }} Air Temp: {{ site.temp_C|convert:'degC_degF'|floatformat:1 }}°F | {{ site.temp_C }}°C"/>
                 {% endif %}
                 {{ site.temp_C|convert:"degC_degF"|floatformat:0 }}°F
-                <img class="icon" src="/gass/media/img/draw_convolve.png" />
+                    <img class="icon" src="/gass/media/img/draw_convolve.png" title="{{ site.site|upper }} Cumulative Melt: {{ site.rng_cm|floatformat:0 }} cm | {{ site.rng_cm|convert:'cm_in'|floatformat:1 }} inches"/>
                 {{ site.rng_cm|floatformat:0 }}cm
                 {% if site.volts >= 8.0 %}
-                    <img class="icon" src="/gass/media/img/battery_full.png" />
+                    <img class="icon" src="/gass/media/img/battery_full.png" title="{{ site.site|upper }} Battery Voltage: {{ site.volts|floatformat:2 }} V"/>
                 {% else %}
                     {% if site.volts >= 7.75 %}
-                        <img class="icon" src="/gass/media/img/battery_half.png" />
+                        <img class="icon" src="/gass/media/img/battery_half.png" title="{{ site.site|upper }} Battery Voltage: {{ site.volts|floatformat:2 }} V"/>
                     {% else %}
-                        <img class="icon" src="/gass/media/img/battery_low.png" />
+                        <img class="icon" src="/gass/media/img/battery_low.png"  title="{{ site.site|upper }} Battery Voltage: {{ site.volts|floatformat:2 }} V"/>
                     {% endif %}
                 {% endif %}
                 {{ site.volts|floatformat:1 }}V
-                </a>
+                </div>
             {% endfor %}
             <div class="subheading wide">{{ then|date:"M j, Y" }} @ {{ then|date:"f A" }} UTC</div>
         </div>
     </div>
+    {% endif %}
     {% autoescape off %}
     {% for item in news %}
         <div class="post">
