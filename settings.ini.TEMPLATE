@@ -21,6 +21,8 @@ LOADING_LOG_FILENAME: /var/log/gass/loading.log
 
 [media]
 MEDIA_ROOT: /usr/local/dev/gass/media/
+APACHE_STATIC_ROOT: /static/
+STATIC_DOC_ROOT: /usr/local/dev/gass/media/doc/
 
 [secrets]
 SECRET_KEY: random-string-of-ascii

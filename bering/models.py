@@ -1,4 +1,4 @@
-import re, math, ipdb
+import re, math
 from django.contrib.gis.db import models
 from gass.bering.utils import *
 
@@ -67,7 +67,7 @@ class Campaign(models.Model):
 
 
     def __unicode__(self):
-        return '%s (%d)' % (self.site.upper(), self.season)
+        return '%s (%d)' % (self.site_id.upper(), self.season)
 
 
 class Ablation(models.Model):
@@ -235,11 +235,9 @@ class Ablation(models.Model):
         distance_m = math.sqrt((lat_diff_m*lat_diff_m) + (lng_diff_m*lng_diff_m))
         return distance_m
 
+
 class B1Ablation(models.Model):
-    '''
-    For backwards compatibility: 2011 ablation measurement at GASS B1;
-    identical to B2Ablation model.
-    '''
+    '''Ablation measurement at GASS B01; identical to B2Ablation model.'''
     satellites = models.IntegerField('Number of Satellites')
     hdop = models.FloatField('Dilution of Precision', null=True)
     time = models.TimeField('Time')
@@ -258,8 +256,11 @@ class B1Ablation(models.Model):
     #       fear of re-inserting records already in the database
     lat = models.DecimalField('Latitude (Deg, Dec. Min. N)', max_digits=8, decimal_places=5)
     lng = models.DecimalField('Longitude (Deg, Dec. Min. W)', max_digits=9, decimal_places=5)
+    gps_ok = models.BooleanField('Position is Valid')
     acoustic_range_cm = models.DecimalField('Acoustic Range (cm)', max_digits=5, decimal_places=2)
     optical_range_cm = models.DecimalField('Optical Range (cm)', max_digits=10, decimal_places=5)
+    # sensor_height = models.DecimalField('Sensor Height at Installation', max_digits=5, decimal_places=2)
+    ablation_ok = models.BooleanField('Ablation is Valid')
     top_light = models.IntegerField('Irradiance)')
     bottom_light = models.IntegerField('Reflectance)')
     wind_m_s = models.DecimalField('Wind Speed (m/s)', max_digits=5, decimal_places=2)
@@ -273,10 +274,7 @@ class B1Ablation(models.Model):
 
 
 class B2Ablation(models.Model):
-    '''
-    For backwards compatibility: 2011 ablation measurement at GASS B2;
-    identical to B1Ablation model.
-    '''
+    '''Ablation measurement at GASS B02; almost identical to B1Ablation model (has elevation).'''
     satellites = models.IntegerField('Number of Satellites')
     hdop = models.FloatField('Dilution of Precision', null=True)
     time = models.TimeField('Time')
@@ -284,8 +282,12 @@ class B2Ablation(models.Model):
     datetime = models.DateTimeField('Date and Time', primary_key=True)
     lat = models.DecimalField('Latitude (Deg, Dec. Min. N)', max_digits=8, decimal_places=5)
     lng = models.DecimalField('Longitude (Deg, Dec. Min. W)', max_digits=9, decimal_places=5)
+    elev = models.DecimalField('Elevation', max_digits=4, decimal_places=1, blank=True, null=True)
+    gps_ok = models.BooleanField('Position is Valid')
     acoustic_range_cm = models.DecimalField('Acoustic Range (cm)', max_digits=5, decimal_places=2)
     optical_range_cm = models.DecimalField('Optical Range (cm)', max_digits=10, decimal_places=5)
+    # sensor_height = models.DecimalField('Sensor Height at Installation', max_digits=5, decimal_places=2)
+    ablation_ok = models.BooleanField('Ablation is Valid')
     top_light = models.IntegerField('Irradiance)')
     bottom_light = models.IntegerField('Reflectance)')
     wind_m_s = models.DecimalField('Wind Speed (m/s)', max_digits=5, decimal_places=2)
@@ -294,3 +296,77 @@ class B2Ablation(models.Model):
 
     def __unicode__(self):
         return str(self.date) + ', ' + str(self.time)
+
+
+class B4Ablation(models.Model):
+    '''Ablation measurement at GASS B04; identical to B1Ablation model.'''
+    satellites = models.IntegerField('Number of Satellites')
+    hdop = models.FloatField('Dilution of Precision', null=True)
+    time = models.TimeField('Time')
+    date = models.DateField('Date')
+    datetime = models.DateTimeField('Date and Time', primary_key=True)
+    lat = models.DecimalField('Latitude (Deg, Dec. Min. N)', max_digits=8, decimal_places=5)
+    lng = models.DecimalField('Longitude (Deg, Dec. Min. W)', max_digits=9, decimal_places=5)
+    gps_ok = models.BooleanField('Position is Valid')
+    acoustic_range_cm = models.DecimalField('Acoustic Range (cm)', max_digits=5, decimal_places=2)
+    optical_range_cm = models.DecimalField('Optical Range (cm)', max_digits=10, decimal_places=5)
+    # sensor_height = models.DecimalField('Sensor Height at Installation', max_digits=5, decimal_places=2)
+    ablation_ok = models.BooleanField('Ablation is Valid')
+    top_light = models.IntegerField('Irradiance)')
+    bottom_light = models.IntegerField('Reflectance)')
+    wind_m_s = models.DecimalField('Wind Speed (m/s)', max_digits=5, decimal_places=2)
+    temp_C = models.DecimalField('Temperature (C)', max_digits=4, decimal_places=1, null=True)
+    voltage = models.FloatField('Battery Voltage (V)')
+
+    def __unicode__(self):
+        return str(self.date) + ', ' + str(self.time)
+
+
+class B6Ablation(models.Model):
+    '''Ablation measurement at GASS B06; identical to B1Ablation model.'''
+    satellites = models.IntegerField('Number of Satellites')
+    hdop = models.FloatField('Dilution of Precision', null=True)
+    time = models.TimeField('Time')
+    date = models.DateField('Date')
+    datetime = models.DateTimeField('Date and Time', primary_key=True)
+    lat = models.DecimalField('Latitude (Deg, Dec. Min. N)', max_digits=8, decimal_places=5)
+    lng = models.DecimalField('Longitude (Deg, Dec. Min. W)', max_digits=9, decimal_places=5)
+    gps_ok = models.BooleanField('Position is Valid')
+    acoustic_range_cm = models.DecimalField('Acoustic Range (cm)', max_digits=5, decimal_places=2)
+    optical_range_cm = models.DecimalField('Optical Range (cm)', max_digits=10, decimal_places=5)
+    # sensor_height = models.DecimalField('Sensor Height at Installation', max_digits=5, decimal_places=2)
+    ablation_ok = models.BooleanField('Ablation is Valid')
+    top_light = models.IntegerField('Irradiance)')
+    bottom_light = models.IntegerField('Reflectance)')
+    wind_m_s = models.DecimalField('Wind Speed (m/s)', max_digits=5, decimal_places=2)
+    temp_C = models.DecimalField('Temperature (C)', max_digits=4, decimal_places=1, null=True)
+    voltage = models.FloatField('Battery Voltage (V)')
+
+    def __unicode__(self):
+        return str(self.date) + ', ' + str(self.time)
+
+
+class T1Ablation(models.Model):
+    '''Ablation measurement at GASS T01; identical to B1Ablation model.'''
+    satellites = models.IntegerField('Number of Satellites')
+    hdop = models.FloatField('Dilution of Precision', null=True)
+    time = models.TimeField('Time')
+    date = models.DateField('Date')
+    datetime = models.DateTimeField('Date and Time', primary_key=True)
+    lat = models.DecimalField('Latitude (Deg, Dec. Min. N)', max_digits=8, decimal_places=5)
+    lng = models.DecimalField('Longitude (Deg, Dec. Min. W)', max_digits=9, decimal_places=5)
+    gps_ok = models.BooleanField('Position is Valid')
+    acoustic_range_cm = models.DecimalField('Acoustic Range (cm)', max_digits=5, decimal_places=2)
+    optical_range_cm = models.DecimalField('Optical Range (cm)', max_digits=10, decimal_places=5)
+    # sensor_height = models.DecimalField('Sensor Height at Installation', max_digits=5, decimal_places=2)
+    ablation_ok = models.BooleanField('Ablation is Valid')
+    top_light = models.IntegerField('Irradiance)')
+    bottom_light = models.IntegerField('Reflectance)')
+    wind_m_s = models.DecimalField('Wind Speed (m/s)', max_digits=5, decimal_places=2)
+    temp_C = models.DecimalField('Temperature (C)', max_digits=4, decimal_places=1, null=True)
+    voltage = models.FloatField('Battery Voltage (V)')
+
+    def __unicode__(self):
+        return str(self.date) + ', ' + str(self.time)
+
+

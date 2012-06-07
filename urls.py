@@ -23,7 +23,7 @@ urlpatterns = patterns('',
 #   (r'^plot/mdds/$',               'gass.public.views.display_plot_mdds'),
 #   (r'^plot/migration/$',          'gass.public.views.display_plot_migration'),
 #   (r'^plot/conditions/$',         'gass.public.views.display_plot_conditions'),
-#   (r'^export/(?P<site>\w{3})$',   'gass.public.views.export_all_records')
+    (r'^export/(?P<site>\w{3})$',   'gass.bering.views.export_all_records')
     )
 
 if settings.DEBUG:

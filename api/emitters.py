@@ -1,4 +1,4 @@
-import csv, ipdb
+import csv
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.utils.encoding import smart_str
