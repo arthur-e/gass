@@ -125,6 +125,35 @@ class Ablation(models.Model):
             'rng_cm', 'above', 'below', 'wind_spd', 'temp_C', 'volts')
 
 
+    def get_previous_record(self, *args, **kwargs):
+        '''
+        '''
+        td = datetime.timedelta(hours=1)
+        foretime = self.datetime + td # An hour later
+        backtime = self.datetime - td # An hour earlier
+        # Get a window of observations around this sorted datetime descending
+        window = Ablation.objects.filter(site__exact=self.site,
+            datetime__range=(backtime, foretime)).order_by('-datetime')
+
+        # Find the first adjacent record earlier in time
+        if len(window) > 1:
+            for each in window:
+                if each.datetime.replace(tzinfo=UTC()) < self.datetime:
+                    return each
+
+        elif len(window) == 1:
+            # Only if the record is previous in time...
+            if window[0].datetime.replace(tzinfo=UTC()) < self.datetime:
+                return window[0]
+
+            else: return None
+
+        # No adjacent measurements in time
+        elif len(window) == 0: return None
+
+        else: return ValueError
+
+
     def clean(self, *args, **kwargs):
         '''
         Accepts a tzinfo keyword argument where tzinfo is an instance of
@@ -160,30 +189,7 @@ class Ablation(models.Model):
         '''
         A validation procedure setting gps_valid and rng_cm_valid flags.
         '''
-        td = datetime.timedelta(hours=1)
-        foretime = self.datetime + td # An hour later
-        backtime = self.datetime - td # An hour earlier
-        # Get a window of observations around this sorted datetime descending
-        window = Ablation.objects.filter(site__exact=self.site,
-            datetime__range=(backtime, foretime)).order_by('-datetime')
-
-        # Find the first adjacent record earlier in time
-        if len(window) > 1:
-            for each in window:
-                if each.datetime.replace(tzinfo=UTC()) < self.datetime:
-                    last = each
-                    break
-
-        elif len(window) == 1:
-            # Only if the record is previous in time...
-            if window[0].datetime.replace(tzinfo=UTC()) < self.datetime:
-                last = window[0]
-            else: last = None
-
-        # No adjacent measurements in time
-        elif len(window) == 0: last = None
-
-        else: return ValueError
+        last = self.get_previous_record()
 
         # TEST: Sufficient satellite constellation?
         if self.sats < 3:
@@ -194,10 +200,14 @@ class Ablation(models.Model):
         if self.rng_cm > 600.0:
             self.rng_cm_valid = False
 
-        if last is None: return None
+        try:
+            if last is None: return None
+
+        except UnboundLocalError:
+            return None
 
         datetime_diff = abs((self.datetime - last.datetime.replace(tzinfo=UTC())).seconds)
-        rng_cm_diff = abs(self.rng_cm - last.rng_cm)
+        rng_cm_diff = self.rng_cm - last.rng_cm
 
         # TEST: Indpendent measurements?
         if datetime_diff < 1600:
@@ -205,9 +215,14 @@ class Ablation(models.Model):
             self.gps_valid = False
 
         # TEST: Likely bogus acoustic measurements?
-        if datetime_diff < 4200 and rng_cm_diff > 10.0 and last.rng_cm < 600.0:
-            # Closely-separated measurements in time (less than 70 minutes)
-            #   with more than 10 cm melt are likely invalid
+        if datetime_diff < (60*60*3) and rng_cm_diff > 5.0 and last.rng_cm < 600.0:
+            # Closely-separated measurements in time (less than 3 hours)
+            #   with more than 5 cm melt are likely invalid
+            self.rng_cm_valid = False
+
+        # TEST: Likely bogus acoustic measurements?
+        if not last.rng_cm_valid and rng_cm_diff > 0.0:
+            # The last range measurement was invalid and this one is greater
             self.rng_cm_valid = False
 
 

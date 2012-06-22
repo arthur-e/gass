@@ -111,8 +111,9 @@ class Command(BaseCommand):
 
                 data_obj = model(**data_dict) # Create a model instance
                 data_obj.clean(tzinfo=UTC()) # Perform initial validation
-                try: # Check to see if the record already exists
-                    model.objects.get(datetime__exact=data_obj.datetime)
+                try:
+                    # Check to see if the record already exists; redo validation
+                    model.objects.get(datetime__exact=data_obj.datetime).clean(tzinfo=UTC())
 
                 except ObjectDoesNotExist:
                     data_obj.save() # Save the record to the database only if it doesn't already exist
