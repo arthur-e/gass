@@ -28,7 +28,11 @@
                 {% endif %}
                 {{ site.temp_C|convert:"degC_degF"|floatformat:0 }}°F
                     <img class="icon" src="/gass/media/img/draw_convolve.png" title="{{ site.site|upper }} Cumulative Melt: {{ site.rng_cm|floatformat:0 }} cm | {{ site.rng_cm|convert:'cm_in'|floatformat:1 }} inches"/>
-                {{ site.rng_cm|floatformat:0 }}cm
+                {% if site.gps_valid and not site.rng_cm_valid %}
+                    <span class="strike">{{ site.rng_cm|floatformat:0 }}cm</span>
+                {% else %}
+                    {{ site.rng_cm|floatformat:0 }}cm
+                {% endif %}
                 {% if site.volts >= 8.0 %}
                     <img class="icon" src="/gass/media/img/battery_full.png" title="{{ site.site|upper }} Battery Voltage: {{ site.volts|floatformat:2 }} V"/>
                 {% else %}

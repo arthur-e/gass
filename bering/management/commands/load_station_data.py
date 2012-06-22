@@ -72,6 +72,9 @@ class Command(BaseCommand):
             'batt': 'volts'
         }
 
+        cols = ('valid', 'sats', 'hdop', 'time', 'date', 'lat', 'lng', 'elev',
+            'rng_cm', 'above', 'below', 'wind_spd', 'temp_C', 'volts')
+
         logger.info("Starting data import for site %s at %s" % (station.site,
             str(datetime.datetime.now())))
 
@@ -90,15 +93,21 @@ class Command(BaseCommand):
                 data_dict = {
                     'site': station
                 }
-                for field in header:
-                    value = line[header.index(field)] # The value for that field
+
+                # for field in header:
+                for field in cols:
+                    # value = line[header.index(field)] # The value for that field
+                    value = line[cols.index(field)]
                     # Catch empty values that should be null
                     if len(value) == 0 or value == '_':
-                        if model._meta.get_field(aliases[field.lower()]).null:
-                            data_dict[aliases[field.lower()]] = None
+                        # if model._meta.get_field(aliases[field.lower()]).null:
+                            # data_dict[aliases[field.lower()]] = None
+                        if model._meta.get_field(field).null:
+                            data_dict[field] = None
 
                     else:
-                        data_dict[aliases[field.lower()]] = value
+                        # data_dict[aliases[field.lower()]] = value
+                        data_dict[field] = value
 
                 data_obj = model(**data_dict) # Create a model instance
                 data_obj.clean(tzinfo=UTC()) # Perform initial validation

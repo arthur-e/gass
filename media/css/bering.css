@@ -66,7 +66,7 @@ ul {list-style:square outside;text-align:left;}
 .icon a:hover,
 .icon a:active {border:none;}
 .indent {text-indent:20px;}
-#index-sites {float:right;}
+#index-sites {float:right;margin:0 0 20px 20px;}
 .lead {font-weight:bold;font-style:italic;font-size:110%;}
 .list {line-height:24px;}
 #location-map {z-index:99;width:220px;height:125px;float:right;margin:0 0 10px 10px;}
@@ -155,6 +155,7 @@ ul {list-style:square outside;text-align:left;}
 .signature a:active {color:#BDF !important;border:none;}
 .subtitle {font-size:18px;font-style:italic;margin:20px 0 0;}
 .sup {position:relative;top:-5px;font-size:75%;}
+.strike {text-decoration:line-through;}
 .title {font-size:24px;margin:20px 0 0 0;}
 .title,
 .subtitle {font-family:MerriweatherBold,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;}
