@@ -1,0 +1,169 @@
+@charset "utf-8";
+@font-face {
+font-family: "MerriweatherRegular";
+font-style: normal;
+font-weight: normal;
+src: url("/gass/media/font/Merriweather-webfont.eot?#iefix") format("embedded-opentype"), url("/gass/media/font/Merriweather-webfont.woff") format("woff"), url("/gass/media/font/Merriweather-webfont.ttf") format("truetype"), url("/gass/media/font/Merriweather-webfont.svg#MerriweatherRegular") format("svg");
+}
+@font-face {
+font-family: "MerriweatherLight";
+font-style: normal;
+font-weight: normal;
+src: url("/gass/media/font/Merriweather-Light-webfont.eot?#iefix") format("embedded-opentype"), url("/gass/media/font/Merriweather-Light-webfont.woff") format("woff"), url("/gass/media/font/Merriweather-Light-webfont.ttf") format("truetype"), url("/gass/media/font/Merriweather-Light-webfont.svg#MerriweatherLight") format("svg");
+}
+@font-face {
+font-family: "MerriweatherBold";
+font-style: normal;
+font-weight: normal;
+src: url("/gass/media/font/Merriweather-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("/gass/media/font/Merriweather-Bold-webfont.woff") format("woff"), url("/gass/media/font/Merriweather-Bold-webfont.ttf") format("truetype"), url("/gass/media/font/Merriweather-Bold-webfont.svg#MerriweatherBold") format("svg");
+}
+@font-face {
+font-family: "MerriweatherBlack";
+font-style: normal;
+font-weight: normal;
+src: url("/gass/media/font/Merriweather-Black-webfont.eot?#iefix") format("embedded-opentype"), url("/gass/media/font/Merriweather-Black-webfont.woff") format("woff"), url("/gass/media/font/Merriweather-Black-webfont.ttf") format("truetype"), url("/gass/media/font/Merriweather-Black-webfont.svg#MerriweatherBlack") format("svg");
+}
+
+a:link, a:visited {color:#036;text-decoration:none;}
+a:hover, a:active {color:#F00;text-decoration:none;}
+body {margin:0;padding:0;overflow-x:hidden;font-family:Helvetica,Arial,sans-serif;background-color:#666;text-align:right;color:black;}
+div {padding:0;margin:0;}
+ul {list-style:square outside;text-align:left;}
+
+.attribute,
+.widget {display:inline-block;vertical-align:top;margin:20px;color:#CCC;}
+#attribution {min-height:150px;background-color:transparent;border-top:1px solid #FFF;text-align:left;}
+.brand {font-family:MerriweatherBlack,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;}
+#canvas {background:#FFF url(/gass/media/img/noyles.jpg) top left no-repeat;}
+.citation {font-size:12px;color:#333;}
+.citation a:hover,
+.citation a:active {color:inherit;text-decoration:none;border:none;}
+.container {width:90%;float:right;overflow:hidden;}
+#content {float:right;width:60%;padding:20px;background-color:#EEE;}
+#content a:link,
+#feature a:link,
+#feature a:visited,
+#content a:visited {border:none;}
+#content a:hover,
+#feature a:hover,
+#feature a:active,
+#content a:active {border-bottom:1px dotted #F00;}
+#credits {float:right;width:220px;margin:20px 0px 10px 20px;text-align:center;clear:right;}
+.date {color:#036;font-family:MerriweatherRegular,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;}
+.datum {clear:both;margin:20px 0 40px 40px;}
+#disclaimer {width:100%;margin:20px 0 0;padding:5px 5px 5px 10%;line-height:15px;font-size:10px;color:#999;text-align:justify;clear:both;background:#555;}
+#disclaimer a:link,
+#disclaimer a:visited {color:#5AF;}
+#disclaimer a:hover,
+#disclaimer a:active {color:#F00;border:none;}
+#feature {float:left;width:30%;padding:20px;position:relative;top:50px;background-color:#EEE;font-family:MerriweatherRegular,Georgia,serif;font-size:16px;color:black;text-shadow:0 0 6px rgba(0, 0, 0, 0.3);border-bottom:5px solid #666;text-align:left;}
+#feed {text-align:left;}
+.figure {float:right;width:180px;margin:0 0 20px 20px;border:none;}
+#header {z-index:3;background:#EEE;height:55px;margin:20px 0;padding:0 0 0 20px;line-height:65px;letter-spacing:0px;word-spacing:5px;font-size:48px;font-weight:bold;text-align:left;text-shadow:0 0 24px #FFF,0 0 18px #FFF,0 0 12px #FFF;}
+.icon {display:inline;float:left;border:none;z-index:99;padding-right:15px;}
+.icon a:link,
+.icon a:visited,
+.icon a:hover,
+.icon a:active {border:none;}
+.indent {text-indent:20px;}
+#index-sites {float:right;margin:0 0 20px 20px;}
+.lead {font-weight:bold;font-style:italic;font-size:110%;}
+.list {line-height:24px;}
+#location-map {z-index:99;width:220px;height:125px;float:right;margin:0 0 10px 10px;}
+#logo-mtri, #logo-blm, #logo-usgs {display:block;float:right;border:none;margin-bottom:20px;padding:0px 40px;}
+#logo-mtri, #logo-blm, #logo-usgs, {vertical-align:bottom;float:right;display:block;}
+#logo-mtri {width:140px;height:102px;}
+#logo-blm {width:140px;height:122px;}
+#logo-usgs {width:140px;height:42px;}
+.menu {float:left;list-style:none;line-height:24px;font-weight:bold;font-size:12px;color:#333;text-shadow:1px 1px 0 #FFF;
+    background:#EEE;
+    border-color:#D4D4D4 #D4D4D4 #BCBCBC;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    border-style:solid;
+    border-width:1px;
+    -moz-box-shadow:0px 2px 2px #333;
+    -webkit-box-shadow:0px 2px 2px #333;
+    box-shadow:0px 2px 2px #333;
+    filter: progid: DXImageTransform.Microsoft.Shadow(strength = 2, direction = 180, color = '#333333');
+    -ms-filter: "progid: DXImageTransform.Microsoft.Shadow(strength = 2, Direction = 180, Color = '#333333')";
+}
+.menu a,
+.menu div {display:block;padding:2px 5px 0 5px;color:#333;}
+.menu a:link,
+.menu a:visited {color:#333 !important;}
+.menu a:hover,
+.menu a:active {color:#333 !important;background:#BDF;}
+.menu .emphasis {color:#036;cursor:pointer;}
+.menu .bordered {border-bottom:1px solid #CCC;}
+.menu .bullet {padding:0;}
+.menu .bullet,
+.menu .icon {vertical-align:middle;display:inline;float:none;cursor:pointer;}
+.menu .icon {padding:0 0 0 5px;}
+.menu .padless {padding:2px 0 0;}
+.menu .subheading,
+.menu .heading,
+.tool {display:inline-block;font-weight:bold;padding:2px 5px 0 5px;font-family:Helvetica,Arial,arial,freesans,clean,sans-serif;text-shadow:1px 1px 0 #FFF;}
+.menu .narrow {width:150px;}
+.menu .medium {width:180px;}
+.menu .wide {width:210px;}
+.menu .subheading {background:#FFF;font-size:12px;font-style:normal;text-align:right;border-top:1px solid #CCC;}
+.menu .heading,
+.tool {height:25px;font-size:14px;font-style:italic;
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr = '#EEEEEE', endColorstr = '#AAAAAA');
+    -ms-filter: "progid: DXImageTransform.Microsoft.gradient(startColorstr = '#EEEEEE', endColorstr = '#AAAAAA')";
+    background-image: -moz-linear-gradient(top, #EEEEEE, #AAAAAA);
+    background-image: -ms-linear-gradient(top, #EEEEEE, #AAAAAA);
+    background-image: -o-linear-gradient(top, #EEEEEE, #AAAAAA);
+    background-image: -webkit-gradient(linear, center top, center bottom, from(#EEEEEE), to(#AAAAAA));
+    background-image: -webkit-linear-gradient(top, #EEEEEE, #AAAAAA);
+    background-image: linear-gradient(top, #EEEEEE, #AAAAAA);
+}
+#monograph {float:right;border:none;margin:0 0 20px 20px;
+    -moz-box-shadow:0 2px 6px #333;
+    -webkit-box-shadow:0 2px 6px #333;
+    box-shadow:0 2px 6px #333;
+    }
+#navigator {height:25px;width:100%;margin:0;padding:0 0 5px;background:#000;}
+.navigation {position:absolute;left:10%;margin:0;padding:5px 0 0 20px;list-style:none;color:#FFF;text-align:left;font-family:Helvetica,Arial,sans-serif;font-weight:bold;font-size:16px;}
+.navigation li {display:inline;padding:0 20px 0 0;line-height:18px;}
+.navigation li a:link,
+.navigation li a:visited {border:none;text-decoration:none;color:white;padding:0 0 4px;}
+.navigation li a:hover, 
+.navigation li a:active,
+.navigation .lit a:link,
+.navigation .lit a:visited,
+.navigation .lit a:hover, 
+.navigation .lit a:active {border-bottom:5px solid red;color:red;}
+.nudgeup {position:relative;top:-1px;}
+.page-title {font-family:MerriweatherBold,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;margin:0 0 20px;}
+.paragraph {text-align:justify;}
+.paragraph,
+.paragraph-wrap {margin:0 0 20px;}
+.paragraph-wrap {text-align:left;}
+.post {text-align:left;font-size:16px;margin:0 0 20px;}
+.page-title,
+.post-headline {font-size:32px;text-shadow:0 0 6px #AAA;}
+.post-date {margin:0 0 10px;padding:0 0 5px 20px;font-size:18px;}
+.resized {width:60%;}
+.right {text-align:right;}
+.signature {font-family:MerriweatherBold,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;font-style:italic;font-size:24px;text-shadow:0 0 1px #333,0 0 4px #999;}
+.signature a:link,
+.signature a:visited {color:#FFF !important;border:none;}
+.signature a:hover,
+.signature a:active {color:#BDF !important;border:none;}
+.subtitle {font-size:18px;font-style:italic;margin:20px 0 0;}
+.sup {position:relative;top:-5px;font-size:75%;}
+.strike {text-decoration:line-through;}
+.title {font-size:24px;margin:20px 0 0 0;}
+.title,
+.subtitle {font-family:MerriweatherBold,Palatino Linotype,Book Antiqua,Palatino,serif;font-stretch:normal;}
+.tool {
+    border-color:#D4D4D4 #D4D4D4 #BCBCBC;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    border-style:solid;
+    border-width:1px;
+}
