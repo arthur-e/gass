@@ -58,7 +58,8 @@ def load_defaults():
             'operational': each.operational
         })
 
-        if latest_ablation.datetime > then: then = latest_ablation.datetime
+        if latest_ablation.datetime > then:
+            then = latest_ablation.datetime
 
     return {
         'stations': stations,
